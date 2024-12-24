@@ -3,7 +3,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { baseRLC, tableRLC } from '../common.description';
+import { baseRLC, tableRLC, viewRLC } from '../common.description';
 
 import * as get from './get.operation';
 import * as search from './search.operation';
@@ -51,6 +51,7 @@ const properties: INodeProperties[] = [
 	},
 	baseRLC,
 	tableRLC,
+	viewRLC,
 	...get.description,
 	...search.description,
 ];

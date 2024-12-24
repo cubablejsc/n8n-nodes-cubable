@@ -73,6 +73,45 @@ export const tableRLC: INodeProperties = {
 	],
 };
 
+export const viewRLC: INodeProperties = {
+	displayName: 'View',
+	name: 'view',
+	type: 'resourceLocator',
+	displayOptions: {
+		hide: {
+			table: ['']
+		},
+	},
+	default: { mode: 'list', value: '' },
+	required: true,
+	modes: [
+		{
+			displayName: 'From List',
+			name: 'list',
+			type: 'list',
+			typeOptions: {
+				searchListMethod: 'viewSearch',
+				searchable: true,
+			},
+		},
+		{
+			displayName: 'By ID',
+			name: 'id',
+			type: 'string',
+			placeholder: 'Enter the View ID',
+			validation: [
+				{
+					type: 'regex',
+					properties: {
+						regex: '[0-7][0-9A-HJKMNP-TV-Z]{25}',
+						errorMessage: 'Not a valid Cubable View ID',
+					},
+				},
+			],
+		},
+	],
+};
+
 export const getRecordFormatResults: INodeProperties[] = [
 	{
 		displayName: 'Expand Custom Fields',

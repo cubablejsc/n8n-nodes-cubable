@@ -66,7 +66,7 @@ export async function tableSearch(
 	filter?: string,
 	paginationToken?: any
 ): Promise<INodeListSearchResult> {
-	const baseID = this.getNodeParameter( 'base', undefined, {
+	const baseID: string = this.getNodeParameter( 'base', undefined, {
 		extractValue: true,
 	} ) as string;
 
@@ -98,9 +98,9 @@ export async function tableSearch(
 		}
 	} else {
 		results = response.data.map(
-			( table: { id: string; name: string } ) => ({
+			( table: { id: string; name: string, views: any[] } ) => ({
 				name: table.name,
-				value: table.id,
+				value: { id: table.id, views: table.views },
 			})
 		);
 	}
@@ -112,4 +112,35 @@ export async function tableSearch(
 			offset: page + pageSize,
 		},
 	};
+};
+
+export async function viewSearch(
+	this: ILoadOptionsFunctions,
+	filter?: string,
+	paginationToken?: any
+): Promise<INodeListSearchResult> {
+	const table: any = this.getNodeParameter( 'table', undefined );
+
+	let results: INodeListSearchItems[] = [];
+	
+	if ( table?.value ) {
+		const views: any[] = table.value.views || [];
+
+		if ( filter ) {
+			for ( const view of views ) {
+				if ( view.name?.toLowerCase().includes( filter.toLowerCase() ) ) {
+					results.push({ name: view.name, value: view.id });
+				}
+			}
+		} else {
+			results = views.map(
+				( view: { id: string; name: string } ) => ({
+					name: view.name,
+					value: view.id,
+				})
+			);
+		}
+	}
+
+	return { results };
 };
