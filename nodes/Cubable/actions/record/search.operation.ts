@@ -32,11 +32,15 @@ export async function execute(
 	baseID: string,
 	tableID: string,
 ): Promise<INodeExecutionData[]> {
+	const viewID: string = this.getNodeParameter( 'view', 0, undefined, {
+		extractValue: true,
+	} ) as string;
 	const returnFieldsByFieldID: boolean
 		= this.getNodeParameter( 'returnFieldsByFieldID', 0 ) as boolean;
 	const response = await apiRequest.call( this, 'GET', 'records', {
 		baseID,
 		tableID,
+		viewID,
 		returnFieldsByFieldID,
 	} );
 
