@@ -121,8 +121,25 @@ export async function viewSearch(
 	filter?: string,
 	paginationToken?: any
 ): Promise<INodeListSearchResult> {
-	const table: any = this.getNodeParameter( 'table', undefined );
-	const views: any[] = cacheViews[ table.value ] || [];
+	const tableID: string = this.getNodeParameter( 'table', undefined, {
+		extractValue: true,
+	} ) as string;
+
+	let views: any = cacheViews[ tableID ];
+
+	if ( !views ) {
+		const baseID: string = this.getNodeParameter( 'base', undefined, {
+			extractValue: true,
+		} ) as string;
+
+		let qs: IDataObject = { baseID };
+
+		const response: any = await apiRequest.call( this, 'GET', `tables/${tableID}`, qs );
+
+		views = response.data?.views;
+	}
+
+	views ||= [];
 
 	let results: INodeListSearchItems[] = [];
 
