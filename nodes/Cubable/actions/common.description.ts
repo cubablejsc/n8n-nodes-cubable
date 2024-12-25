@@ -40,7 +40,7 @@ export const tableRLC: INodeProperties = {
 	type: 'resourceLocator',
 	displayOptions: {
 		hide: {
-			base: ['']
+			base: [ '' ],
 		},
 	},
 	default: { mode: 'list', value: '' },
@@ -79,7 +79,8 @@ export const viewRLC: INodeProperties = {
 	type: 'resourceLocator',
 	displayOptions: {
 		hide: {
-			table: ['']
+			base: [ '' ],
+			table: [ '' ],
 		},
 	},
 	default: { mode: 'list', value: '' },

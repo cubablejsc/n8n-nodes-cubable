@@ -8,6 +8,7 @@ import type {
 import { apiRequest } from '../transport';
 
 const DEFAULT_PAGE_SIZE: number = 50;
+const cacheViews: Record<string, any[]> = {};
 
 export async function baseSearch(
 	this: ILoadOptionsFunctions,
@@ -29,13 +30,12 @@ export async function baseSearch(
 	}
 
 	const response: any = await apiRequest.call( this, 'GET', 'bases', qs );
+	const bases: any = response.data || [];
 
 	let results: INodeListSearchItems[] = [];
 
-	if ( !response.data ) return { results };
-
 	if ( filter ) {
-		for ( const base of response.data ) {
+		for ( const base of bases ) {
 			if ( base.name?.toLowerCase().includes( filter.toLowerCase() ) ) {
 				results.push({
 					name: base.name as string,
@@ -44,7 +44,7 @@ export async function baseSearch(
 			}
 		}
 	} else {
-		results = response.data.map(
+		results = bases.map(
 			( base: { id: string; name: string } ) => ({
 				name: base.name,
 				value: base.id,
@@ -85,23 +85,25 @@ export async function tableSearch(
 	}
 
 	const response: any = await apiRequest.call( this, 'GET', 'tables', qs );
+	const tables: any = response.data || [];
 
 	let results: INodeListSearchItems[] = [];
 
-	if ( !response.data ) return { results };
-
 	if ( filter ) {
-		for ( const table of response.data ) {
+		for ( const table of tables ) {
 			if ( table.name?.toLowerCase().includes( filter.toLowerCase() ) ) {
+				cacheViews[ table.id ] = table.views;
+
 				results.push({ name: table.name, value: table.id });
 			}
 		}
 	} else {
-		results = response.data.map(
-			( table: { id: string; name: string, views: any[] } ) => ({
-				name: table.name,
-				value: { id: table.id, views: table.views },
-			})
+		results = tables.map(
+			( table: { id: string; name: string, views: any[] } ) => {
+				cacheViews[ table.id ] = table.views;
+
+				return { name: table.name, value: table.id };
+			}
 		);
 	}
 
@@ -120,27 +122,24 @@ export async function viewSearch(
 	paginationToken?: any
 ): Promise<INodeListSearchResult> {
 	const table: any = this.getNodeParameter( 'table', undefined );
+	const views: any[] = cacheViews[ table.value ] || [];
 
 	let results: INodeListSearchItems[] = [];
-	
-	if ( table?.value ) {
-		const views: any[] = table.value.views || [];
 
-		if ( filter ) {
-			for ( const view of views ) {
-				if ( view.name?.toLowerCase().includes( filter.toLowerCase() ) ) {
-					results.push({ name: view.name, value: view.id });
-				}
+	if ( filter ) {
+		for ( const view of views ) {
+			if ( view.name?.toLowerCase().includes( filter.toLowerCase() ) ) {
+				results.push({ name: view.name, value: view.id });
 			}
-		} else {
-			results = views.map(
-				( view: { id: string; name: string } ) => ({
-					name: view.name,
-					value: view.id,
-				})
-			);
 		}
+	} else {
+		results = views.map(
+			( view: { id: string; name: string } ) => ({
+				name: view.name,
+				value: view.id,
+			})
+		);
 	}
 
-	return { results };
+	return { results, paginationToken };
 };
