@@ -18,6 +18,7 @@ const properties: INodeProperties[] = [
 				name: 'Create',
 				value: 'create',
 				description: 'Create a new record in a table',
+				action: 'Create a new record in a table',
 			},
 			// {
 			// 	name: 'Create or update',
@@ -33,11 +34,13 @@ const properties: INodeProperties[] = [
 				name: 'Get',
 				value: 'get',
 				description: 'Retrieve a record from a table',
+				action: 'Retrieve a record from a table',
 			},
 			{
 				name: 'Search',
 				value: 'search',
 				description: 'Search for specific records or list all',
+				action: 'Search for specific records or list all',
 			},
 			// {
 			// 	name: 'Update',

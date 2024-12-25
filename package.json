@@ -1,15 +1,15 @@
 {
   "name": "n8n-nodes-cubable",
   "version": "0.1.0",
-  "description": "",
+  "description": "Cubable node of n8n",
   "keywords": [
     "n8n-community-node-package"
   ],
   "license": "MIT",
   "homepage": "",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Cubable",
+    "email": "product-team@cubable.com"
   },
   "repository": {
     "type": "git",

@@ -15,7 +15,7 @@ export class CubableTokenApi implements ICredentialType {
 
 	displayName = 'Cubable Access Token API';
 
-	documentationUrl = '';
+	documentationUrl = 'https://open.cubable.com/v1';
 
 	properties: INodeProperties[] = [
 		{
@@ -26,6 +26,7 @@ export class CubableTokenApi implements ICredentialType {
 			placeholder: 'Enter your API Key',
 			description: 'The API Key for authenticating requests.',
 			required: true,
+			typeOptions: { password: true },
 		},
 		{
 			displayName: 'API URL',

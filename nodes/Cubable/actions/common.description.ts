@@ -117,14 +117,14 @@ export const getRecordFormatResults: INodeProperties[] = [
 		displayName: 'Expand Custom Fields',
 		name: 'expandCustomFields',
 		type: 'boolean',
-		description: 'Enable this option to convert nested custom fields into a flat structure in the output.',
+		description: 'Whether enable this option to convert nested custom fields into a flat structure in the output',
 		default: false,
 	},
 	{
-		displayName: 'Return fields by Field ID',
+		displayName: 'Return by Field ID',
 		name: 'returnFieldsByFieldID',
 		type: 'boolean',
-		description: 'Enable this option to convert nested custom fields into a flat structure in the output.',
+		description: 'Whether enable this option to return custom fields by their field IDs in the output',
 		default: false,
 	},
 ];

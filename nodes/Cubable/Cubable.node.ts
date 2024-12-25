@@ -26,7 +26,9 @@ export class Cubable implements INodeType {
 		version: 1,
 		description: 'Read, update, write and delete data from Cubable',
 		defaults: { name: 'Cubable' },
+		// eslint-disable-next-line n8n-nodes-base/node-class-description-inputs-wrong-regular-node
 		inputs: [ NodeConnectionType.Main ],
+		// eslint-disable-next-line n8n-nodes-base/node-class-description-inputs-wrong-regular-node, n8n-nodes-base/node-class-description-outputs-wrong
 		outputs: [ NodeConnectionType.Main ],
 		credentials: [
 			{
@@ -50,6 +52,7 @@ export class Cubable implements INodeType {
 						value: CBB_CREDENTIAL_NAME,
 					},
 				],
+				// eslint-disable-next-line n8n-nodes-base/node-param-default-wrong-for-options
 				default: CBB_CREDENTIAL_NAME,
 			},
 			{
