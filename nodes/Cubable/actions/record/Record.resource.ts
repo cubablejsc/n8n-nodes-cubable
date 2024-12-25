@@ -10,8 +10,8 @@ import * as search from './search.operation';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Operator',
-		name: 'operator',
+		displayName: 'Operation',
+		name: 'operation',
 		type: 'options',
 		options: [
 			{
@@ -63,3 +63,5 @@ export const description: INodeProperties[] = updateDisplayOptions(
 	},
 	properties
 );
+
+export { get, search };

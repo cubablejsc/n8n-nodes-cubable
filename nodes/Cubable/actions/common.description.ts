@@ -84,7 +84,6 @@ export const viewRLC: INodeProperties = {
 		},
 	},
 	default: { mode: 'list', value: '' },
-	required: true,
 	modes: [
 		{
 			displayName: 'From List',

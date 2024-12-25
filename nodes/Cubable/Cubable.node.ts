@@ -1,7 +1,6 @@
 import type {
 	IExecuteFunctions,
 	INodeExecutionData,
-	INodeParameterResourceLocator,
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
@@ -14,8 +13,7 @@ import {
 } from '../../credentials/CubableTokenApi.credentials';
 
 import { listSearch } from './methods';
-import { apiRequest } from './transport';
-
+import { router } from './actions/router';
 import * as record from './actions/record/Record.resource';
 
 export class Cubable implements INodeType {
@@ -78,37 +76,7 @@ export class Cubable implements INodeType {
 
 
 	async execute( this: IExecuteFunctions ): Promise<INodeExecutionData[][]> {
-		const base: INodeParameterResourceLocator
-			= this.getNodeParameter( 'base', 0 ) as INodeParameterResourceLocator;
-		const table: INodeParameterResourceLocator
-			= this.getNodeParameter( 'table', 0 ) as INodeParameterResourceLocator;
-		const expandCustomFields: boolean
-			= this.getNodeParameter( 'expandCustomFields', 0 ) as boolean;
-		const returnFieldsByFieldID: boolean
-			= this.getNodeParameter( 'returnFieldsByFieldID', 0 ) as boolean;
-		const response = await apiRequest.call( this, 'GET', 'records', {
-			baseID: base.value,
-			tableID: table.value,
-			returnFieldsByFieldID,
-		} );
-
-		const returnData: INodeExecutionData[] = [];
-
-		for ( const record of response.data || [] ) {
-			let json: any;
-
-			if ( expandCustomFields ) {
-				json = { ...record, ...record.customFields };
-
-				delete json.customFields;
-			} else {
-				json = record;
-			}
-
-			returnData.push({ json });
-		}
-
-		return [ returnData ];
+		return await router.call( this );
 	}
 
 }
