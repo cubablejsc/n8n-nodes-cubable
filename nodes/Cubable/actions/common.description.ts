@@ -38,13 +38,13 @@ export const tableRLC: INodeProperties = {
 	displayName: 'Table',
 	name: 'table',
 	type: 'resourceLocator',
+	required: true,
 	displayOptions: {
 		hide: {
 			base: [ '' ],
 		},
 	},
 	default: { mode: 'list', value: '' },
-	required: true,
 	modes: [
 		{
 			displayName: 'From List',
