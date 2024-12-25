@@ -3,7 +3,10 @@ import {
 	updateDisplayOptions
 } from 'n8n-workflow';
 
-import { getRecordFormatResults, viewRLC } from '../common.description';
+import {
+	getRecordFormatResults,
+	viewRLC
+} from '../common.description';
 
 export const properties: INodeProperties[] = [
 	viewRLC,
