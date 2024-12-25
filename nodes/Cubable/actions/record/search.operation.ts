@@ -1,4 +1,5 @@
 import {
+	IDataObject,
 	type IExecuteFunctions,
 	type INodeExecutionData,
 	type INodeProperties,
@@ -37,12 +38,15 @@ export async function execute(
 	} ) as string;
 	const returnFieldsByFieldID: boolean
 		= this.getNodeParameter( 'returnFieldsByFieldID', 0 ) as boolean;
-	const response = await apiRequest.call( this, 'GET', 'records', {
+	const qs: IDataObject = {
 		baseID,
 		tableID,
-		viewID,
 		returnFieldsByFieldID,
-	} );
+	};
+
+	if ( viewID ) qs.viewID = viewID;
+
+	const response = await apiRequest.call( this, 'GET', 'records', qs );
 
 	const expandCustomFields: boolean
 		= this.getNodeParameter( 'expandCustomFields', 0 ) as boolean;
