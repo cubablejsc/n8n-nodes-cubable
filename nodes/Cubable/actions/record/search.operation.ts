@@ -15,6 +15,28 @@ import {
 
 export const properties: INodeProperties[] = [
 	viewRLC,
+	{
+		displayName: 'Return All',
+		name: 'returnAll',
+		type: 'boolean',
+		description: 'Whether to return all results or only up to a given limit',
+		default: true,
+	},
+	{
+		displayName: 'Limit',
+		name: 'limit',
+		type: 'number',
+		description: 'Max number of results to return',
+		displayOptions: {
+			show: {
+				returnAll: [ false ],
+			},
+		},
+		typeOptions: {
+			minValue: 1,
+		},
+		default: 50,
+	},
 	...getRecordFormatResults,
 ];
 
@@ -27,25 +49,33 @@ export const description: INodeProperties[] = updateDisplayOptions(
 	properties
 );
 
+const MAX_PAGE_SIZE: number = 50;
+
 async function query(
 	this: IExecuteFunctions,
 	qs: IDataObject,
+	limit: number = Infinity,
 	_page: number = 1,
 	_arr: any[] = []
 ) {
-	qs.page = _page;
+	const offset: number = ( _page - 1 ) * MAX_PAGE_SIZE;
 
-	const response = await apiRequest.call( this, 'GET', 'records', qs );
-	const data = response.data || [];
+	if ( offset < limit ) {
+		qs.page = _page;
+		qs.pageSize = Math.min( limit - offset, MAX_PAGE_SIZE );
 
-	_arr.push( ...data );
+		const response = await apiRequest.call( this, 'GET', 'records', qs );
+		const data = response.data || [];
 
-	if ( data.length === qs.pageSize ) {
-		qs.sessionID = response.sessionID;
+		_arr.push( ...data );
 
-		// @ts-ignore
-		await new Promise( resolve => setTimeout( resolve, 500 ) );
-		await query.call( this, qs, _page + 1, _arr );
+		if ( data.length === qs.pageSize ) {
+			qs.sessionID = response.sessionID;
+
+			// @ts-ignore
+			await new Promise( resolve => setTimeout( resolve, 500 ) );
+			await query.call( this, qs, limit, _page + 1, _arr );
+		}
 	}
 
 	return _arr;
@@ -63,7 +93,6 @@ export async function execute(
 		baseID,
 		tableID,
 		returnFieldsByFieldID,
-		pageSize: 50,
 	};
 
 	const viewID: string = this.getNodeParameter( 'view', 0, undefined, {
@@ -72,7 +101,14 @@ export async function execute(
 
 	if ( viewID ) qs.viewID = viewID;
 
-	const records = await query.call( this, qs );
+	const returnAll: boolean = this.getNodeParameter( 'returnAll', 0 ) as boolean;
+	let limit: number = Infinity;
+
+	if ( !returnAll ) {
+		limit = this.getNodeParameter( 'limit', 0 ) as number;
+	}
+
+	const records = await query.call( this, qs, limit );
 
 	const expandCustomFields: boolean
 		= this.getNodeParameter( 'expandCustomFields', 0 ) as boolean;
