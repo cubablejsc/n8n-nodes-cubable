@@ -1,11 +1,12 @@
-import type {
-	IDataObject,
-	ILoadOptionsFunctions,
-	INodePropertyOptions
+import {
+	type ILoadOptionsFunctions,
+	type INodePropertyOptions,
+	NodeOperationError
 } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
 
 import { apiRequest } from '../transport';
+
+import { Field } from '../types';
 
 export async function getFields( this: ILoadOptionsFunctions ): Promise<INodePropertyOptions[]> {
 	const baseID = this.getNodeParameter( 'base', undefined, {
@@ -16,7 +17,7 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<INodePro
 	} ) as string;
 
 	const response = await apiRequest.call( this, 'GET', 'fields', { baseID, tableID } );
-	const fields: IDataObject[] = response.data || [];
+	const fields: Field[] = response.data || [];
 
 	if ( !fields.length ) {
 		throw new NodeOperationError(
