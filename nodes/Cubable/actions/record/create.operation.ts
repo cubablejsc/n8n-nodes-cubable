@@ -15,6 +15,12 @@ export const properties: INodeProperties[] = [
 		displayName: 'Fields',
 		name: 'fields',
 		type: 'resourceMapper',
+		displayOptions: {
+			hide: {
+				base: [ '' ],
+				table: [ '' ],
+			},
+		},
 		default: {
 			mappingMode: 'defineBelow',
 			value: null,
@@ -34,6 +40,13 @@ export const properties: INodeProperties[] = [
 				multiKeyMatch: true,
 			},
 		},
+	},
+	{
+		displayName: 'Required Input Based on Field Config',
+		name: 'requiredFieldByConfig',
+		type: 'boolean',
+		description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
+		default: false,
 	},
 	...getRecordFormatResults,
 ];

@@ -12,7 +12,7 @@ import {
 	CUBABLE_TOKEN_API_CREDENTIAL_NAME as CBB_CREDENTIAL_NAME,
 } from '../../credentials/CubableTokenApi.credentials';
 
-import { listSearch, loadOptions } from './methods';
+import { listSearch, loadOptions, resourceMapping } from './methods';
 import { router } from './actions/router';
 import * as record from './actions/record/Record.resource';
 
@@ -73,7 +73,7 @@ export class Cubable implements INodeType {
 		],
 	};
 
-	methods = { listSearch, loadOptions };
+	methods = { listSearch, loadOptions, resourceMapping };
 
 	async execute( this: IExecuteFunctions ): Promise<INodeExecutionData[][]> {
 		return await router.call( this );
