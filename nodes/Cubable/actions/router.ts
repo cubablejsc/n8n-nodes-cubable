@@ -8,7 +8,7 @@ import * as record from './record/Record.resource';
 export async function router( this: IExecuteFunctions ): Promise<INodeExecutionData[][]> {
 	const items: INodeExecutionData[] = this.getInputData();
 	const resource: string = this.getNodeParameter( 'resource', 0 );
-	const operation: any = this.getNodeParameter( 'operation', 0 );
+	const operation: string = this.getNodeParameter( 'operation', 0 );
 
 	let returnData: INodeExecutionData[] = [];
 
@@ -21,7 +21,7 @@ export async function router( this: IExecuteFunctions ): Promise<INodeExecutionD
 				extractValue: true,
 			} ) as string;
 
-			returnData = await ( record as any )[ operation ].execute.call(
+			returnData = await ( record as any )[ operation as any ].execute.call(
 				this,
 				items,
 				baseID,

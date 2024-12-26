@@ -56,7 +56,7 @@ async function query(
 	qs: IDataObject,
 	limit: number = Infinity,
 	_page: number = 1,
-	_arr: any[] = []
+	_arr: IDataObject[] = []
 ) {
 	const offset: number = ( _page - 1 ) * MAX_PAGE_SIZE;
 
@@ -115,10 +115,10 @@ export async function execute(
 	const returnData: INodeExecutionData[] = [];
 
 	for ( const record of records ) {
-		let json: any;
+		let json: IDataObject;
 
 		if ( expandCustomFields ) {
-			json = { ...record, ...record.customFields };
+			json = { ...record, ...record.customFields as IDataObject };
 
 			delete json.customFields;
 		} else {

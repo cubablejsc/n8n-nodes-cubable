@@ -1,7 +1,8 @@
 import {
-	type INodeProperties,
+	type IDataObject,
 	type IExecuteFunctions,
 	type INodeExecutionData,
+	type INodeProperties,
 	updateDisplayOptions
 } from 'n8n-workflow';
 
@@ -47,14 +48,14 @@ export async function execute(
 		returnFieldsByFieldID,
 	} );
 
-	const record: any = response.data;
+	const record: IDataObject = response.data;
 	const expandCustomFields: boolean
 		= this.getNodeParameter( 'expandCustomFields', 0 ) as boolean;
 
-	let json: any;
+	let json: IDataObject;
 
 	if ( expandCustomFields ) {
-		json = { ...record, ...record.customFields };
+		json = { ...record, ...record.customFields as IDataObject };
 
 		delete json.customFields;
 	} else {

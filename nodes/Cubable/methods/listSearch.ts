@@ -7,8 +7,10 @@ import type {
 
 import { apiRequest } from '../transport';
 
+import { Base, Table, View } from '../types';
+
 const DEFAULT_PAGE_SIZE: number = 50;
-const cacheViews: Record<string, any[]> = {};
+const cacheViews: Record<string, View[]> = {};
 
 export async function baseSearch(
 	this: ILoadOptionsFunctions,
@@ -30,26 +32,18 @@ export async function baseSearch(
 	}
 
 	const response: any = await apiRequest.call( this, 'GET', 'bases', qs );
-	const bases: any = response.data || [];
+	const bases: Base[] = response.data || [];
 
 	let results: INodeListSearchItems[] = [];
 
 	if ( filter ) {
 		for ( const base of bases ) {
 			if ( base.name?.toLowerCase().includes( filter.toLowerCase() ) ) {
-				results.push({
-					name: base.name as string,
-					value: base.id as string,
-				});
+				results.push({ name: base.name, value: base.id });
 			}
 		}
 	} else {
-		results = bases.map(
-			( base: { id: string; name: string } ) => ({
-				name: base.name,
-				value: base.id,
-			})
-		);
+		results = bases.map(( base: Base ) => ({ name: base.name, value: base.id }));
 	}
 
 	return {
@@ -85,7 +79,7 @@ export async function tableSearch(
 	}
 
 	const response: any = await apiRequest.call( this, 'GET', 'tables', qs );
-	const tables: any = response.data || [];
+	const tables: Table[] = response.data || [];
 
 	let results: INodeListSearchItems[] = [];
 
@@ -98,13 +92,11 @@ export async function tableSearch(
 			}
 		}
 	} else {
-		results = tables.map(
-			( table: { id: string; name: string, views: any[] } ) => {
-				cacheViews[ table.id ] = table.views;
+		results = tables.map(( table: Table ) => {
+			cacheViews[ table.id ] = table.views;
 
-				return { name: table.name, value: table.id };
-			}
-		);
+			return { name: table.name, value: table.id };
+		});
 	}
 
 	return {
@@ -125,7 +117,7 @@ export async function viewSearch(
 		extractValue: true,
 	} ) as string;
 
-	let views: any = cacheViews[ tableID ];
+	let views: View[] = cacheViews[ tableID ];
 
 	if ( !views ) {
 		const baseID: string = this.getNodeParameter( 'base', undefined, {
@@ -150,12 +142,7 @@ export async function viewSearch(
 			}
 		}
 	} else {
-		results = views.map(
-			( view: { id: string; name: string } ) => ({
-				name: view.name,
-				value: view.id,
-			})
-		);
+		results = views.map(( view: View ) => ({ name: view.name, value: view.id }));
 	}
 
 	return { results, paginationToken };

@@ -7,6 +7,7 @@ import { baseRLC, tableRLC } from '../common.description';
 
 import * as get from './get.operation';
 import * as search from './search.operation';
+import * as create from './create.operation';
 
 const properties: INodeProperties[] = [
 	{
@@ -56,6 +57,7 @@ const properties: INodeProperties[] = [
 	tableRLC,
 	...get.description,
 	...search.description,
+	...create.description,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(
@@ -67,4 +69,4 @@ export const description: INodeProperties[] = updateDisplayOptions(
 	properties
 );
 
-export { get, search };
+export { get, search, create };
