@@ -5,5 +5,7 @@ export type Field = {
     id: string;
     name: string;
     description: string;
+    dataType: number;
     isRequired: boolean;
+    params: any;
 };
