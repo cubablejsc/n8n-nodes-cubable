@@ -4,7 +4,7 @@ import type {
 	INodeProperties,
 } from 'n8n-workflow';
 
-export const CUBABLE_API_ENDPOINT: string = 'https://open.cubable.com/v1';
+export const CUBABLE_API_ENDPOINT: string = 'https://open.cubable.com/api/v1';
 export const CUBABLE_TOKEN_API_CREDENTIAL_NAME: string = 'cubableTokenApi';
 
 export type CubableTokenApiCredentialProps = { apiKey: string; apiUrl: string; };
@@ -15,7 +15,7 @@ export class CubableTokenApi implements ICredentialType {
 
 	displayName = 'Cubable Access Token API';
 
-	documentationUrl = 'https://open.cubable.com/v1';
+	documentationUrl = 'https://open.cubable.com/api/v1';
 
 	properties: INodeProperties[] = [
 		{
