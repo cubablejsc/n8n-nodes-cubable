@@ -7,7 +7,7 @@ import type {
 
 import { apiRequest } from '../transport';
 
-import { Base, Table, View } from '../types';
+import { Base, Table, View } from '../helpers/types';
 
 const DEFAULT_PAGE_SIZE: number = 50;
 const cacheViews: Record<string, View[]> = {};

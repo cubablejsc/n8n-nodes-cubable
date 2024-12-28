@@ -9,7 +9,7 @@ import {
 
 import { apiRequest } from '../transport';
 
-import { Field } from '../types';
+import { Field } from '../helpers/types';
 
 enum CBBFieldType {
 	Text = 1,

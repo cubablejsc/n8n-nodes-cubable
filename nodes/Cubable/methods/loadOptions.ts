@@ -6,7 +6,7 @@ import {
 
 import { apiRequest } from '../transport';
 
-import { Field } from '../types';
+import { Field } from '../helpers/types';
 
 export async function getFields( this: ILoadOptionsFunctions ): Promise<INodePropertyOptions[]> {
 	const baseID = this.getNodeParameter( 'base', undefined, {

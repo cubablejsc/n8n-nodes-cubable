@@ -3,10 +3,12 @@ import {
 	type IExecuteFunctions,
 	type INodeExecutionData,
 	type INodeProperties,
+	type NodeExecutionWithMetadata,
 	updateDisplayOptions
 } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';
+import { flattenRecordCustomFields, wrapData } from '../../helpers/utils';
 
 import { getRecordFormatResults } from '../common.description';
 
@@ -37,30 +39,50 @@ export async function execute(
 	baseID: string,
 	tableID: string,
 ): Promise<INodeExecutionData[]> {
-	const recordID: boolean = this.getNodeParameter( 'recordID', 0, undefined, {
-		extractValue: true
-	} ) as boolean;
-	const returnFieldsByFieldID: boolean
-		= this.getNodeParameter( 'returnFieldsByFieldID', 0 ) as boolean;
-	const response = await apiRequest.call( this, 'GET', `records/${recordID}`, {
-		baseID,
-		tableID,
-		returnFieldsByFieldID,
-	} );
+	const returnData: INodeExecutionData[] = [];
+	const qs: IDataObject = { baseID, tableID };
 
-	const record: IDataObject = response.data;
-	const expandCustomFields: boolean
-		= this.getNodeParameter( 'expandCustomFields', 0 ) as boolean;
+	for ( let i = 0; i < items.length; i++ ) {
+		try {
+			const returnFieldsByFieldID: boolean
+				= this.getNodeParameter( 'returnFieldsByFieldID', i ) as boolean;
 
-	let json: IDataObject;
+			qs.returnFieldsByFieldID = returnFieldsByFieldID;
 
-	if ( expandCustomFields ) {
-		json = { ...record, ...record.customFields as IDataObject };
+			const recordID: boolean = this.getNodeParameter( 'recordID', i, undefined, {
+				extractValue: true
+			} ) as boolean;
 
-		delete json.customFields;
-	} else {
-		json = record;
+			const response: any = await apiRequest.call( this, 'GET', `records/${recordID}`, qs );
+
+			let record: IDataObject = response.data;
+
+			const expandCustomFields: boolean
+				= this.getNodeParameter( 'expandCustomFields', i ) as boolean;
+
+			record = expandCustomFields
+				? flattenRecordCustomFields( record )
+				: record;
+
+			const executionData: NodeExecutionWithMetadata[]
+				= this.helpers.constructExecutionMetaData(
+					wrapData( record ),
+					{ itemData: { item: i } }
+				);
+
+			returnData.push( ...executionData );
+		} catch ( error ) {
+			if ( this.continueOnFail() ) {
+				returnData.push({
+					json: { message: error.message, error },
+					pairedItem: { item: i },
+				});
+				continue;
+			}
+
+			throw error;
+		}
 	}
 
-	return [{ json }];
+	return returnData;
 }

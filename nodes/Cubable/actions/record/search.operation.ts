@@ -1,12 +1,14 @@
 import {
-	IDataObject,
+	type IDataObject,
 	type IExecuteFunctions,
 	type INodeExecutionData,
 	type INodeProperties,
+	type NodeExecutionWithMetadata,
 	updateDisplayOptions
 } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';
+import { flattenRecordCustomFields } from '../../helpers/utils';
 
 import {
 	getRecordFormatResults,
@@ -87,45 +89,56 @@ export async function execute(
 	baseID: string,
 	tableID: string,
 ): Promise<INodeExecutionData[]> {
-	const returnFieldsByFieldID: boolean
-		= this.getNodeParameter( 'returnFieldsByFieldID', 0 ) as boolean;
-	const qs: IDataObject = {
-		baseID,
-		tableID,
-		returnFieldsByFieldID,
-	};
-
-	const viewID: string = this.getNodeParameter( 'view', 0, undefined, {
-		extractValue: true,
-	} ) as string;
-
-	if ( viewID ) qs.viewID = viewID;
-
-	const returnAll: boolean = this.getNodeParameter( 'returnAll', 0 ) as boolean;
-	let limit: number = Infinity;
-
-	if ( !returnAll ) {
-		limit = this.getNodeParameter( 'limit', 0 ) as number;
-	}
-
-	const records = await query.call( this, qs, limit );
-
-	const expandCustomFields: boolean
-		= this.getNodeParameter( 'expandCustomFields', 0 ) as boolean;
 	const returnData: INodeExecutionData[] = [];
+	const qs: IDataObject = { baseID, tableID };
 
-	for ( const record of records ) {
-		let json: IDataObject;
+	for ( let i = 0; i < items.length; i++ ) {
+		try {
+			const viewID: string = this.getNodeParameter( 'view', i, undefined, {
+				extractValue: true,
+			} ) as string;
+		
+			if ( viewID ) qs.viewID = viewID;
 
-		if ( expandCustomFields ) {
-			json = { ...record, ...record.customFields as IDataObject };
+			const returnFieldsByFieldID: boolean
+				= this.getNodeParameter( 'returnFieldsByFieldID', i ) as boolean;
 
-			delete json.customFields;
-		} else {
-			json = record;
+			qs.returnFieldsByFieldID = returnFieldsByFieldID;
+
+			const returnAll: boolean = this.getNodeParameter( 'returnAll', i ) as boolean;
+			const limit: number = !returnAll
+				? this.getNodeParameter( 'limit', i ) as number
+				: Infinity;
+
+			let records: any[] = await query.call( this, qs, limit );
+
+			const expandCustomFields: boolean
+				= this.getNodeParameter( 'expandCustomFields', i ) as boolean;
+
+			records = records.map(( record: IDataObject ) => ({
+				json: expandCustomFields
+					? flattenRecordCustomFields( record )
+					: record,
+			}));
+
+			const executionData: NodeExecutionWithMetadata[]
+				= this.helpers.constructExecutionMetaData(
+					records as INodeExecutionData[],
+					{ itemData: { item: i } }
+				);
+
+			returnData.push( ...executionData );
+		} catch ( error ) {
+			if ( this.continueOnFail() ) {
+				returnData.push({
+					json: { message: error.message, error },
+					pairedItem: { item: i },
+				});
+				continue;
+			}
+
+			throw error;
 		}
-
-		returnData.push({ json });
 	}
 
 	return returnData;

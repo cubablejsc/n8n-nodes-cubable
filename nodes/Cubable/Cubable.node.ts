@@ -24,6 +24,7 @@ export class Cubable implements INodeType {
 		icon: 'file:cubable.svg',
 		group: [ 'transform' ],
 		version: 1,
+		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
 		description: 'Read, update, write and delete data from Cubable',
 		defaults: { name: 'Cubable' },
 		// eslint-disable-next-line n8n-nodes-base/node-class-description-inputs-wrong-regular-node
