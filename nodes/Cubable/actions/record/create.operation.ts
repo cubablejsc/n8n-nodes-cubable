@@ -3,12 +3,12 @@ import {
 	type IExecuteFunctions,
 	type INodeExecutionData,
 	type INodeProperties,
+	type NodeExecutionWithMetadata,
 	updateDisplayOptions
 } from 'n8n-workflow';
 
-// import { apiRequest } from '../../transport';
-
-import { getRecordFormatResults } from '../common.description';
+import { apiRequest } from '../../transport';
+import { wrapData } from '../../helpers/utils';
 
 export const properties: INodeProperties[] = [
 	{
@@ -41,14 +41,13 @@ export const properties: INodeProperties[] = [
 			},
 		},
 	},
-	{
-		displayName: 'Required Input Based on Field Config',
-		name: 'requiredFieldByConfig',
-		type: 'boolean',
-		description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
-		default: false,
-	},
-	...getRecordFormatResults,
+	// {
+	// 	displayName: 'Required Input Based on Field Config',
+	// 	name: 'requiredFieldByConfig',
+	// 	type: 'boolean',
+	// 	description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
+	// 	default: false,
+	// },
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(
@@ -60,36 +59,71 @@ export const description: INodeProperties[] = updateDisplayOptions(
 	properties
 );
 
+const MAX_BATCH_SIZE: number = 20;
+
 export async function execute(
 	this: IExecuteFunctions,
 	items: INodeExecutionData[],
 	baseID: string,
 	tableID: string,
 ): Promise<INodeExecutionData[]> {
-	// const recordID: boolean = this.getNodeParameter( 'recordID', 0, undefined, {
-	// 	extractValue: true
-	// } ) as boolean;
-	// const returnFieldsByFieldID: boolean
-	// 	= this.getNodeParameter( 'returnFieldsByFieldID', 0 ) as boolean;
-	// const response = await apiRequest.call( this, 'GET', `records/${recordID}`, {
-	// 	baseID,
-	// 	tableID,
-	// 	returnFieldsByFieldID,
-	// } );
+	const returnData: INodeExecutionData[] = [];
+	const qs: IDataObject = { baseID, tableID };
+	const batch: any = { indexes: [], data: [] };
+	const itemsLength: number = items.length;
+	
+	for ( let i: number = 0; i < itemsLength; i++ ) {
+		const dataMode: string = this.getNodeParameter( 'fields.mappingMode', i ) as string;
 
-	// const record: IDataObject = response.data;
-	// const expandCustomFields: boolean
-	// 	= this.getNodeParameter( 'expandCustomFields', 0 ) as boolean;
+		let fields!: IDataObject;
 
-	let json: IDataObject = {};
+		if ( dataMode === 'defineBelow' ) {
+			fields = this.getNodeParameter( 'fields.value', i, [] ) as IDataObject;
 
-	// if ( expandCustomFields ) {
-	// 	json = { ...record, ...record.customFields as IDataObject };
+			batch.indexes.push( i );
+			batch.data.push( fields );
+		}
 
-	// 	delete json.customFields;
-	// } else {
-	// 	json = record;
-	// }
+		const n: number = i + 1;
 
-	return [{ json }];
+		if ( n < itemsLength && n % MAX_BATCH_SIZE !== 0 ) continue;
+
+		try {
+			const response: any = await apiRequest.call( this, 'POST', 'records', qs, { data: batch.data } );
+
+			for ( let j: number = 0; j < batch.indexes.length; j++ ) {
+				const idx: number = batch.indexes[ j ];
+				const data: IDataObject = {
+					...response.data[ j ],
+					customFields: batch.data[ j ],
+				};
+				const executionData: NodeExecutionWithMetadata[] =
+					this.helpers.constructExecutionMetaData(
+						wrapData( data as IDataObject ),
+						{ itemData: { item: idx } },
+					);
+
+				returnData.push( ...executionData );
+			}
+		} catch ( error ) {
+			if ( this.continueOnFail() ) {
+				for ( const idx of batch.indexes ) {
+					returnData.push({
+						json: { message: error.message, error },
+						pairedItem: { item: idx },
+					});
+				}
+			} else {
+				throw error;
+			}
+		}
+
+		batch.indexes.length = 0;
+		batch.data.length = 0;
+
+		// @ts-ignore
+		await new Promise( resolve => setTimeout( resolve, 1000 ) );
+	}
+
+	return returnData;
 }
