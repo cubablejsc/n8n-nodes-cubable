@@ -20,10 +20,10 @@ export async function apiRequest(
 	body?: IDataObject,
 	options?: IHttpRequestOptions
 ): Promise<any> {
-	const credentials: CBBCredentialProps
-		= await this.getCredentials( CBB_CREDENTIAL_NAME ) as CBBCredentialProps;
-	const authenticationMethod: string
-		= this.getNodeParameter( 'authentication', undefined ) as string;
+	const credentials: CBBCredentialProps =
+		await this.getCredentials( CBB_CREDENTIAL_NAME ) as CBBCredentialProps;
+	const authenticationMethod: string =
+		this.getNodeParameter( 'authentication', undefined ) as string;
 
 	return this.helpers.requestWithAuthentication.call(
 		this,

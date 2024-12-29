@@ -64,8 +64,8 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<Resource
 	const tableID: string = this.getNodeParameter( 'table', undefined, {
 		extractValue: true,
 	} ) as string;
-	const requiredFieldByConfig: boolean
-		= this.getNodeParameter( 'requiredFieldByConfig', undefined, {
+	const requiredFieldByConfig: boolean =
+		this.getNodeParameter( 'requiredFieldByConfig', undefined, {
 			extractValue: true,
 		} ) as boolean;
 
@@ -98,7 +98,8 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<Resource
 		const unsupport: boolean = UNSUPPORT_FIELD_TYPE_MAP[ field.dataType ] || false;
 
 		mapperFields.push({
-			id: field.id,
+			// id: field.id,
+			id: field.name,
 			displayName: `${field.name} (ID: ${field.id})`,
 			required: requiredFieldByConfig && field.isRequired,
 			defaultMatch: false,

@@ -59,7 +59,7 @@ async function query(
 	limit: number = Infinity,
 	_page: number = 1,
 	_arr: IDataObject[] = []
-) {
+): Promise<IDataObject[]> {
 	const offset: number = ( _page - 1 ) * MAX_PAGE_SIZE;
 
 	if ( offset < limit ) {
@@ -92,7 +92,7 @@ export async function execute(
 	const returnData: INodeExecutionData[] = [];
 	const qs: IDataObject = { baseID, tableID };
 
-	for ( let i = 0; i < items.length; i++ ) {
+	for ( let i: number = 0; i < items.length; i++ ) {
 		try {
 			const viewID: string = this.getNodeParameter( 'view', i, undefined, {
 				extractValue: true,
@@ -100,20 +100,22 @@ export async function execute(
 		
 			if ( viewID ) qs.viewID = viewID;
 
-			const returnFieldsByFieldID: boolean
-				= this.getNodeParameter( 'returnFieldsByFieldID', i ) as boolean;
+			const returnFieldsByFieldID: boolean =
+				this.getNodeParameter( 'returnFieldsByFieldID', i ) as boolean;
 
 			qs.returnFieldsByFieldID = returnFieldsByFieldID;
 
 			const returnAll: boolean = this.getNodeParameter( 'returnAll', i ) as boolean;
-			const limit: number = !returnAll
-				? this.getNodeParameter( 'limit', i ) as number
-				: Infinity;
+			let limit!: number;
 
-			let records: any[] = await query.call( this, qs, limit );
+			if ( !returnAll ) {
+				limit = this.getNodeParameter( 'limit', i ) as number;
+			}
 
-			const expandCustomFields: boolean
-				= this.getNodeParameter( 'expandCustomFields', i ) as boolean;
+			let records: IDataObject[] = await query.call( this, qs, limit );
+
+			const expandCustomFields: boolean =
+				this.getNodeParameter( 'expandCustomFields', i ) as boolean;
 
 			records = records.map(( record: IDataObject ) => ({
 				json: expandCustomFields
@@ -121,8 +123,8 @@ export async function execute(
 					: record,
 			}));
 
-			const executionData: NodeExecutionWithMetadata[]
-				= this.helpers.constructExecutionMetaData(
+			const executionData: NodeExecutionWithMetadata[] =
+				this.helpers.constructExecutionMetaData(
 					records as INodeExecutionData[],
 					{ itemData: { item: i } }
 				);

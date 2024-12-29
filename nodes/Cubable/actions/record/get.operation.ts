@@ -42,10 +42,10 @@ export async function execute(
 	const returnData: INodeExecutionData[] = [];
 	const qs: IDataObject = { baseID, tableID };
 
-	for ( let i = 0; i < items.length; i++ ) {
+	for ( let i: number = 0; i < items.length; i++ ) {
 		try {
-			const returnFieldsByFieldID: boolean
-				= this.getNodeParameter( 'returnFieldsByFieldID', i ) as boolean;
+			const returnFieldsByFieldID: boolean =
+				this.getNodeParameter( 'returnFieldsByFieldID', i ) as boolean;
 
 			qs.returnFieldsByFieldID = returnFieldsByFieldID;
 
@@ -57,15 +57,15 @@ export async function execute(
 
 			let record: IDataObject = response.data;
 
-			const expandCustomFields: boolean
-				= this.getNodeParameter( 'expandCustomFields', i ) as boolean;
+			const expandCustomFields: boolean =
+				this.getNodeParameter( 'expandCustomFields', i ) as boolean;
 
 			record = expandCustomFields
 				? flattenRecordCustomFields( record )
 				: record;
 
-			const executionData: NodeExecutionWithMetadata[]
-				= this.helpers.constructExecutionMetaData(
+			const executionData: NodeExecutionWithMetadata[] =
+				this.helpers.constructExecutionMetaData(
 					wrapData( record ),
 					{ itemData: { item: i } }
 				);
