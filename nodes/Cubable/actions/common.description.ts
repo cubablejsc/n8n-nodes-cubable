@@ -118,6 +118,15 @@ export const viewRLC: INodeProperties = {
 	],
 };
 
+export const setRecordID: INodeProperties = {
+	displayName: 'Record ID',
+	name: 'recordID',
+	type: 'string',
+	placeholder: 'e.g. 01JFF58A8P4BJX07A1Y4KBTXJ3',
+	default: '',
+	required: true,
+};
+
 export const getRecordFormatResults: INodeProperties[] = [
 	{
 		displayName: 'Expand Custom Fields',
@@ -135,19 +144,26 @@ export const getRecordFormatResults: INodeProperties[] = [
 	},
 ];
 
-export const setRecordID: INodeProperties = {
-	displayName: 'Record ID',
-	name: 'recordID',
-	type: 'string',
-	placeholder: 'e.g. 01JFF58A8P4BJX07A1Y4KBTXJ3',
-	default: '',
-	required: true,
-};
-
 export const requiredFieldByConfig: INodeProperties = {
 	displayName: 'Required Input Based on Field Config',
 	name: 'requiredFieldByConfig',
 	type: 'boolean',
 	description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
 	default: false,
+};
+
+export const ignoreFields: INodeProperties = {
+	displayName: 'Ignore Fields From Input',
+	name: 'ignoreFields',
+	type: 'multiOptions',
+	displayOptions: {
+		show: {
+			'/fields.mappingMode': [ 'autoMapInputData' ],
+		},
+	},
+	default: [],
+	description: 'List of fields in input to ignore when updating',
+	typeOptions: {
+		loadOptionsMethod: 'getFields',
+	},
 };

@@ -9,9 +9,9 @@ import {
 
 import { apiRequest } from '../../transport';
 import { Batch } from '../../helpers/types';
-import { wrapData } from '../../helpers/utils';
+import { removeIgnoredFields, wrapData } from '../../helpers/utils';
 
-import { requiredFieldByConfig } from '../common.description';
+import { requiredFieldByConfig, ignoreFields } from '../common.description';
 
 export const properties: INodeProperties[] = [
 	requiredFieldByConfig,
@@ -49,6 +49,7 @@ export const properties: INodeProperties[] = [
 			},
 		},
 	},
+	ignoreFields,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(
@@ -78,12 +79,16 @@ export async function execute(
 	for ( let i: number = 0; i < itemsLength; i++ ) {
 		let fields!: IDataObject;
 
-		if ( dataMode === 'defineBelow' ) {
-			fields = this.getNodeParameter( 'fields.value', i, [] ) as IDataObject;
+		if ( dataMode === 'autoMapInputData' ) {
+			const ignoreFields: string[] = this.getNodeParameter( 'ignoreFields', i ) as string[];
 
-			batch.indexes.push( i );
-			batch.data.push( fields );
+			fields = removeIgnoredFields( items[ i ].json, ignoreFields );
+		} else if ( dataMode === 'defineBelow' ) {
+			fields = this.getNodeParameter( 'fields.value', i, [] ) as IDataObject;
 		}
+
+		batch.indexes.push( i );
+		batch.data.push( fields );
 
 		const n: number = i + 1;
 

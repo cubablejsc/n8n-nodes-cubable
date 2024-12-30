@@ -32,7 +32,8 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<INodePro
 	for ( const field of fields ) {
 		result.push({
 			name: field.name as string,
-			value: field.id as string,
+			// value: field.id as string,
+			value: field.name as string,
 			description: field.description as string,
 		});
 	}

@@ -9,7 +9,7 @@ import {
 
 import { apiRequest } from '../../transport';
 import { Batch } from '../../helpers/types';
-import { wrapData } from '../../helpers/utils';
+import { removeIgnoredFields, wrapData } from '../../helpers/utils';
 
 import { requiredFieldByConfig } from '../common.description';
 
@@ -77,13 +77,25 @@ export async function execute(
 	const dataMode: string = this.getNodeParameter( 'fields.mappingMode', 0 ) as string;
 
 	for ( let i: number = 0; i < itemsLength; i++ ) {
-		if ( dataMode === 'defineBelow' ) {
+		let recordID!: string;
+		let fields!: IDataObject;
+
+		if ( dataMode === 'autoMapInputData' ) {
+			const item: INodeExecutionData = items[ i ];
+			const ignoreFields: string[] = this.getNodeParameter( 'ignoreFields', i ) as string[];
+
+			recordID = item.json.id as string;
+			fields = removeIgnoredFields( item.json, ignoreFields );
+		} else if ( dataMode === 'defineBelow' ) {
 			const { id, ...rest }: IDataObject =
 				this.getNodeParameter( 'fields.value', i, [] ) as IDataObject;
 
-			batch.indexes.push( i );
-			batch.data.push({ id, customFields: rest });
+			recordID = id as string;
+			fields = rest;
 		}
+
+		batch.indexes.push( i );
+		batch.data.push({ id: recordID, customFields: fields });
 
 		const n: number = i + 1;
 
