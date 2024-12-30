@@ -154,7 +154,7 @@ export const createOrUpdateOptions: INodeProperties[] = [
 				'/fields.mappingMode': [ 'autoMapInputData' ],
 			},
 		},
-		description: 'List of fields in input to ignore when updating',
+		description: 'Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
 		default: [],
 		typeOptions: {
 			loadOptionsMethod: 'getFields',
