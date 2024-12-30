@@ -1,4 +1,4 @@
-export type Batch = { indexes: number[], data: any[] };
+export type Batch = { indexes: number[]; data: any[]; length: number; };
 
 export type Base = { id: string; name: string };
 

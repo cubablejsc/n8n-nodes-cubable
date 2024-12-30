@@ -8,7 +8,7 @@ import {
 } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';
-import { flattenRecordCustomFields } from '../../helpers/utils';
+import { flattenRecordCustomFields, wait } from '../../helpers/utils';
 
 import {
 	getRecordFormatResults,
@@ -74,8 +74,7 @@ async function query(
 		if ( data.length === qs.pageSize ) {
 			qs.sessionID = response.sessionID;
 
-			// @ts-ignore
-			await new Promise( resolve => setTimeout( resolve, 500 ) );
+			await wait( 500 );
 			await query.call( this, qs, limit, _page + 1, _arr );
 		}
 	}

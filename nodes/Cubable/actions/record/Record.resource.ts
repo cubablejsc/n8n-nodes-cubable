@@ -6,6 +6,7 @@ import {
 import { baseRLC, tableRLC } from '../common.description';
 
 import * as create from './create.operation';
+import * as upsert from './upsert.operation';
 import * as deleteRecord from './deleteRecord.operation';
 import * as get from './get.operation';
 import * as search from './search.operation';
@@ -23,11 +24,12 @@ const properties: INodeProperties[] = [
 				description: 'Create a new record in a table',
 				action: 'Create a new record in a table',
 			},
-			// {
-			// 	name: 'Create or update',
-			// 	value: 'upsert',
-			// 	description: 'Create a new record, or update the current one if it already exists (upsert)',
-			// },
+			{
+				name: 'Create or update',
+				value: 'upsert',
+				description: 'Create a new record, or update the current one if it already exists (upsert)',
+				action: 'Create a new record, or update the current one if it already exists (upsert)',
+			},
 			{
 				name: 'Delete',
 				value: 'deleteRecord',
@@ -60,6 +62,7 @@ const properties: INodeProperties[] = [
 	baseRLC,
 	tableRLC,
 	...create.description,
+	...upsert.description,
 	...deleteRecord.description,
 	...get.description,
 	...search.description,
@@ -75,4 +78,4 @@ export const description: INodeProperties[] = updateDisplayOptions(
 	properties
 );
 
-export { create, deleteRecord, get, search, update };
+export { create, upsert, deleteRecord, get, search, update };

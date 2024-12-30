@@ -34,7 +34,7 @@ export async function execute(
 ): Promise<INodeExecutionData[]> {
 	const returnData: INodeExecutionData[] = [];
 	const qs: IDataObject = { baseID, tableID };
-	const batch: Batch = { indexes: [], data: [] };
+	const batch: Batch = { indexes: [], data: [], length: 0 };
 	const itemsLength: number = items.length;
 
 	for ( let i: number = 0; i < itemsLength; i++ ) {
@@ -44,13 +44,14 @@ export async function execute(
 
 		batch.indexes.push( i );
 		batch.data.push( recordID );
+		batch.length++;
 
 		await batchExecute(
 			async () => {
 				try {
 					await apiRequest.call( this, 'DELETE', 'records', qs, { id: batch.data } );
 
-					for ( let j: number = 0; j < batch.indexes.length; j++ ) {
+					for ( let j: number = 0; j < batch.length; j++ ) {
 						const idx: number = batch.indexes[ j ];
 						const data: IDataObject = { id: batch.data[ j ] };
 						const executionData: NodeExecutionWithMetadata[] =
@@ -63,12 +64,9 @@ export async function execute(
 					}
 				} catch ( error ) {
 					if ( this.continueOnFail() ) {
-						for ( const idx of batch.indexes ) {
-							returnData.push({
-								json: { message: error.message, error },
-								pairedItem: { item: idx },
-							});
-						}
+						returnData.push({
+							json: { message: error.message, error },
+						});
 					} else {
 						throw error;
 					}
