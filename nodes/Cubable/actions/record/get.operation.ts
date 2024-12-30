@@ -4,23 +4,16 @@ import {
 	type INodeExecutionData,
 	type INodeProperties,
 	type NodeExecutionWithMetadata,
-	updateDisplayOptions
+	updateDisplayOptions,
 } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';
 import { flattenRecordCustomFields, wrapData } from '../../helpers/utils';
 
-import { getRecordFormatResults } from '../common.description';
+import { getRecordFormatResults, setRecordID } from '../common.description';
 
 export const properties: INodeProperties[] = [
-	{
-		displayName: 'Record ID',
-		name: 'recordID',
-		type: 'string',
-		placeholder: 'e.g. 01JFF58A8P4BJX07A1Y4KBTXJ3',
-		default: '',
-		required: true,
-	},
+	setRecordID,
 	...getRecordFormatResults,
 ];
 

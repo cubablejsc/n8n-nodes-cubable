@@ -4,7 +4,7 @@ import {
 	type INodeExecutionData,
 	type INodeProperties,
 	type NodeExecutionWithMetadata,
-	updateDisplayOptions
+	updateDisplayOptions,
 } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';

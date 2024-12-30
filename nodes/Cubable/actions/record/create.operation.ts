@@ -4,20 +4,16 @@ import {
 	type INodeExecutionData,
 	type INodeProperties,
 	type NodeExecutionWithMetadata,
-	updateDisplayOptions
+	updateDisplayOptions,
 } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';
 import { wrapData } from '../../helpers/utils';
 
+import { requiredFieldByConfig } from '../common.description';
+
 export const properties: INodeProperties[] = [
-	{
-		displayName: 'Required Input Based on Field Config',
-		name: 'requiredFieldByConfig',
-		type: 'boolean',
-		description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
-		default: false,
-	},
+	requiredFieldByConfig,
 	{
 		displayName: 'Fields',
 		name: 'fields',
