@@ -6,7 +6,7 @@ import {
 import { baseRLC, tableRLC } from '../common.description';
 
 import * as create from './create.operation';
-import * as deleteRecord from './delete.operation';
+import * as deleteRecord from './deleteRecord.operation';
 import * as get from './get.operation';
 import * as search from './search.operation';
 import * as update from './update.operation';
