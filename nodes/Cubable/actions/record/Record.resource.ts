@@ -8,6 +8,7 @@ import { baseRLC, tableRLC } from '../common.description';
 import * as get from './get.operation';
 import * as search from './search.operation';
 import * as create from './create.operation';
+import * as update from './update.operation';
 
 const properties: INodeProperties[] = [
 	{
@@ -43,11 +44,12 @@ const properties: INodeProperties[] = [
 				description: 'Search for specific records or list all',
 				action: 'Search for specific records or list all',
 			},
-			// {
-			// 	name: 'Update',
-			// 	value: 'update', 
-			// 	description: 'Update a record in a table',
-			// },
+			{
+				name: 'Update',
+				value: 'update', 
+				description: 'Update a record in a table',
+				action: 'Update a record in a table',
+			},
 		],
 		default: 'create',
 		noDataExpression: true,
@@ -58,6 +60,7 @@ const properties: INodeProperties[] = [
 	...get.description,
 	...search.description,
 	...create.description,
+	...update.description,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(
@@ -69,4 +72,4 @@ export const description: INodeProperties[] = updateDisplayOptions(
 	properties
 );
 
-export { get, search, create };
+export { get, search, create, update };
