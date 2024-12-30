@@ -9,7 +9,11 @@ import {
 
 import { apiRequest } from '../../transport';
 import { Batch } from '../../helpers/types';
-import { removeIgnoredFields, wrapData } from '../../helpers/utils';
+import {
+	batchExecute,
+	removeIgnoredFields,
+	wrapData,
+} from '../../helpers/utils';
 
 import { createOrUpdateOptions } from '../common.description';
 
@@ -61,8 +65,6 @@ export const description: INodeProperties[] = updateDisplayOptions(
 	properties
 );
 
-const MAX_BATCH_SIZE: number = 20;
-
 export async function execute(
 	this: IExecuteFunctions,
 	items: INodeExecutionData[],
@@ -97,45 +99,44 @@ export async function execute(
 		batch.indexes.push( i );
 		batch.data.push({ id: recordID, customFields: fields });
 
-		const n: number = i + 1;
-
-		if ( n < itemsLength && n % MAX_BATCH_SIZE !== 0 ) continue;
-
-		try {
-			const response: any = await apiRequest.call( this, 'PATCH', 'records', qs, { data: batch.data } );
-
-			for ( let j: number = 0; j < batch.indexes.length; j++ ) {
-				const idx: number = batch.indexes[ j ];
-				const data: IDataObject = {
-					...response.data[ j ],
-					customFields: batch.data[ j ].customFields,
-				};
-				const executionData: NodeExecutionWithMetadata[] =
-					this.helpers.constructExecutionMetaData(
-						wrapData( data as IDataObject ),
-						{ itemData: { item: idx } },
-					);
-
-				returnData.push( ...executionData );
-			}
-		} catch ( error ) {
-			if ( this.continueOnFail() ) {
-				for ( const idx of batch.indexes ) {
-					returnData.push({
-						json: { message: error.message, error },
-						pairedItem: { item: idx },
-					});
+		await batchExecute(
+			async () => {
+				try {
+					const response: any = await apiRequest.call( this, 'PATCH', 'records', qs, { data: batch.data } );
+		
+					for ( let j: number = 0; j < batch.indexes.length; j++ ) {
+						const idx: number = batch.indexes[ j ];
+						const data: IDataObject = {
+							...response.data[ j ],
+							customFields: batch.data[ j ].customFields,
+						};
+						const executionData: NodeExecutionWithMetadata[] =
+							this.helpers.constructExecutionMetaData(
+								wrapData( data as IDataObject ),
+								{ itemData: { item: idx } },
+							);
+		
+						returnData.push( ...executionData );
+					}
+				} catch ( error ) {
+					if ( this.continueOnFail() ) {
+						for ( const idx of batch.indexes ) {
+							returnData.push({
+								json: { message: error.message, error },
+								pairedItem: { item: idx },
+							});
+						}
+					} else {
+						throw error;
+					}
 				}
-			} else {
-				throw error;
-			}
-		}
-
-		batch.indexes.length = 0;
-		batch.data.length = 0;
-
-		// @ts-ignore
-		await new Promise( resolve => setTimeout( resolve, 1000 ) );
+		
+				batch.indexes.length = 0;
+				batch.data.length = 0;
+			},
+			i,
+			itemsLength
+		);
 	}
 
 	return returnData;

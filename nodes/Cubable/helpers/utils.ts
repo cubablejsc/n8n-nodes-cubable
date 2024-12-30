@@ -28,6 +28,20 @@ export function removeIgnoredFields(
     return data;
 }
 
+export async function batchExecute(
+    fn: Function,
+    idx: number,
+    length: number,
+    maxBatchSize: number = 20,
+    delayTime: number = 1000
+) {
+    if ( ( idx + 1 ) < length && ( idx + 1 ) % maxBatchSize !== 0 ) return;
+
+    await fn();
+    // @ts-ignore
+	await new Promise( resolve => setTimeout( resolve, delayTime ) );
+}
+
 export function wrapData(
     data: IDataObject | IDataObject[]
 ): INodeExecutionData[] {
