@@ -12,6 +12,13 @@ import { wrapData } from '../../helpers/utils';
 
 export const properties: INodeProperties[] = [
 	{
+		displayName: 'Required Input Based on Field Config',
+		name: 'requiredFieldByConfig',
+		type: 'boolean',
+		description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
+		default: false,
+	},
+	{
 		displayName: 'Fields',
 		name: 'fields',
 		type: 'resourceMapper',
@@ -28,7 +35,11 @@ export const properties: INodeProperties[] = [
 		noDataExpression: true,
 		required: true,
 		typeOptions: {
-			loadOptionsDependsOn: [ 'table.value', 'base.value' ],
+			loadOptionsDependsOn: [
+				'table.value',
+				'base.value',
+				'requiredFieldByConfig',
+			],
 			resourceMapper: {
 				resourceMapperMethod: 'getFields',
 				mode: 'add',
@@ -41,13 +52,6 @@ export const properties: INodeProperties[] = [
 			},
 		},
 	},
-	// {
-	// 	displayName: 'Required Input Based on Field Config',
-	// 	name: 'requiredFieldByConfig',
-	// 	type: 'boolean',
-	// 	description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
-	// 	default: false,
-	// },
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(

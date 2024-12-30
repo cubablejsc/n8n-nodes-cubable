@@ -44,6 +44,9 @@ export const tableRLC: INodeProperties = {
 			base: [ '' ],
 		},
 	},
+	typeOptions: {
+		loadOptionsDependsOn: [ 'base.value' ],
+	},
 	default: { mode: 'list', value: '' },
 	modes: [
 		{
@@ -82,6 +85,9 @@ export const viewRLC: INodeProperties = {
 			base: [ '' ],
 			table: [ '' ],
 		},
+	},
+	typeOptions: {
+		loadOptionsDependsOn: [ 'base.value', 'table.value' ],
 	},
 	default: { mode: 'list', value: '' },
 	modes: [
