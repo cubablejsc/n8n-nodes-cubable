@@ -78,18 +78,18 @@ export async function execute(
 	const dataMode: string = this.getNodeParameter( 'fields.mappingMode', 0 ) as string;
 
 	for ( let i: number = 0; i < itemsLength; i++ ) {
-		let fields!: IDataObject;
+		let customFields!: IDataObject;
 
 		if ( dataMode === 'autoMapInputData' ) {
 			const ignoreFields: string[] = this.getNodeParameter( 'ignoreFields', i ) as string[];
 
-			fields = removeIgnoredFields( items[ i ].json, ignoreFields );
+			customFields = removeIgnoredFields( items[ i ].json, ignoreFields );
 		} else if ( dataMode === 'defineBelow' ) {
-			fields = this.getNodeParameter( 'fields.value', i, [] ) as IDataObject;
+			customFields = this.getNodeParameter( 'fields.value', i, [] ) as IDataObject;
 		}
 
 		batch.indexes.push( i );
-		batch.data.push( fields );
+		batch.data.push( customFields );
 		batch.length++;
 
 		await batchExecute(

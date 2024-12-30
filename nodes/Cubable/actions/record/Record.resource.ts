@@ -25,10 +25,10 @@ const properties: INodeProperties[] = [
 				action: 'Create a new record in a table',
 			},
 			{
-				name: 'Create or update',
+				name: 'Create or Update',
 				value: 'upsert',
 				description: 'Create a new record, or update the current one if it already exists (upsert)',
-				action: 'Create a new record, or update the current one if it already exists (upsert)',
+				action: 'Create a new record or update in a table',
 			},
 			{
 				name: 'Delete',

@@ -79,25 +79,25 @@ export async function execute(
 	const dataMode: string = this.getNodeParameter( 'fields.mappingMode', 0 ) as string;
 
 	for ( let i: number = 0; i < itemsLength; i++ ) {
-		let recordID!: string;
-		let fields!: IDataObject;
+		let id!: string;
+		let customFields!: IDataObject;
 
 		if ( dataMode === 'autoMapInputData' ) {
 			const item: INodeExecutionData = items[ i ];
 			const ignoreFields: string[] = this.getNodeParameter( 'ignoreFields', i ) as string[];
 
-			recordID = item.json.id as string;
-			fields = removeIgnoredFields( item.json, ignoreFields );
+			id = item.json.id as string;
+			customFields = removeIgnoredFields( item.json, ignoreFields );
 		} else if ( dataMode === 'defineBelow' ) {
-			const { id, ...rest }: IDataObject =
+			const { id: _id, ...rest }: IDataObject =
 				this.getNodeParameter( 'fields.value', i, [] ) as IDataObject;
 
-			recordID = id as string;
-			fields = rest;
+			id = _id as string;
+			customFields = rest;
 		}
 
 		batch.indexes.push( i );
-		batch.data.push({ id: recordID, customFields: fields });
+		batch.data.push({ id, customFields });
 		batch.length++;
 
 		await batchExecute(

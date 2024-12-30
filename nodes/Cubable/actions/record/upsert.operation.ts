@@ -42,34 +42,34 @@ export async function execute(
 	const dataMode: string = this.getNodeParameter( 'fields.mappingMode', 0 ) as string;
 
 	for ( let i: number = 0; i < itemsLength; i++ ) {
-		let recordID!: string;
-		let fields!: IDataObject;
+		let id!: string;
+		let customFields!: IDataObject;
 
 		if ( dataMode === 'autoMapInputData' ) {
 			const item: INodeExecutionData = items[ i ];
 			const ignoreFields: string[] = this.getNodeParameter( 'ignoreFields', i ) as string[];
 
-			recordID = item.json.id as string;
-			fields = removeIgnoredFields( item.json, ignoreFields );
+			id = item.json.id as string;
+			customFields = removeIgnoredFields( item.json, ignoreFields );
 		} else if ( dataMode === 'defineBelow' ) {
-			const { id, ...rest }: IDataObject =
+			const { id: _id, ...rest }: IDataObject =
 				this.getNodeParameter( 'fields.value', i, [] ) as IDataObject;
 
-			recordID = id as string;
-			fields = rest;
+			id = _id as string;
+			customFields = rest;
 		}
 
 		try {
 			let response: any;
 
 			try {
-				const updateData: IDataObject[] = [{ id: recordID, customFields: fields }];
+				const updateData: IDataObject[] = [{ id, customFields }];
 
 				response = await apiRequest.call( this, 'PATCH', 'records', qs, { data: updateData } );
 			} catch ( error ) {
 				if ( error.httpCode.includes( '404' )
 					&& error.description.includes( 'The requested resource could not be found.' ) ) {
-					const createData: IDataObject[] = [{ id: recordID, ...fields }];
+					const createData: IDataObject[] = [{ id, ...customFields }];
 
 					response = await apiRequest.call( this, 'POST', 'records', qs, { data: createData } );
 				} else {
@@ -77,7 +77,7 @@ export async function execute(
 				}
 			}
 
-			const data: IDataObject = { ...response.data, customFields: fields };
+			const data: IDataObject = { ...response.data, customFields };
 			const executionData: NodeExecutionWithMetadata[] =
 				this.helpers.constructExecutionMetaData(
 					wrapData( data as IDataObject ),
