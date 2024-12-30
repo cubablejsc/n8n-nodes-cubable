@@ -11,10 +11,9 @@ import { apiRequest } from '../../transport';
 import { Batch } from '../../helpers/types';
 import { removeIgnoredFields, wrapData } from '../../helpers/utils';
 
-import { requiredFieldByConfig, ignoreFields } from '../common.description';
+import { createOrUpdateOptions } from '../common.description';
 
 export const properties: INodeProperties[] = [
-	requiredFieldByConfig,
 	{
 		displayName: 'Fields',
 		name: 'fields',
@@ -49,7 +48,7 @@ export const properties: INodeProperties[] = [
 			},
 		},
 	},
-	ignoreFields,
+	...createOrUpdateOptions,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(

@@ -144,26 +144,32 @@ export const getRecordFormatResults: INodeProperties[] = [
 	},
 ];
 
-export const requiredFieldByConfig: INodeProperties = {
-	displayName: 'Required Input Based on Field Config',
-	name: 'requiredFieldByConfig',
-	type: 'boolean',
-	description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
-	default: false,
-};
-
-export const ignoreFields: INodeProperties = {
-	displayName: 'Ignore Fields From Input',
-	name: 'ignoreFields',
-	type: 'multiOptions',
-	displayOptions: {
-		show: {
-			'/fields.mappingMode': [ 'autoMapInputData' ],
+export const createOrUpdateOptions: INodeProperties[] = [
+	{
+		displayName: 'Ignore Fields From Input',
+		name: 'ignoreFields',
+		type: 'multiOptions',
+		displayOptions: {
+			show: {
+				'/fields.mappingMode': [ 'autoMapInputData' ],
+			},
+		},
+		description: 'List of fields in input to ignore when updating',
+		default: [],
+		typeOptions: {
+			loadOptionsMethod: 'getFields',
 		},
 	},
-	default: [],
-	description: 'List of fields in input to ignore when updating',
-	typeOptions: {
-		loadOptionsMethod: 'getFields',
+	{
+		displayName: 'Required Input Based on Field Config',
+		name: 'requiredFieldByConfig',
+		type: 'boolean',
+		displayOptions: {
+			show: {
+				'/fields.mappingMode': [ 'defineBelow' ],
+			},
+		},
+		description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
+		default: false,
 	},
-};
+];
