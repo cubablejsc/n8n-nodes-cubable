@@ -69,7 +69,7 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<Resource
 			extractValue: true,
 		} ) as boolean;
 
-	const response = await apiRequest.call( this, 'GET', 'fields', { baseID, tableID } );
+	const response: any = await apiRequest.call( this, 'GET', 'fields', { baseID, tableID } );
 	const fields: Field[] = response.data || [];
 
 	if ( !fields.length ) {

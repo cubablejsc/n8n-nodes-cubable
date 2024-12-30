@@ -66,8 +66,8 @@ async function query(
 		qs.page = _page;
 		qs.pageSize = Math.min( limit - offset, MAX_PAGE_SIZE );
 
-		const response = await apiRequest.call( this, 'GET', 'records', qs );
-		const data = response.data || [];
+		const response: any = await apiRequest.call( this, 'GET', 'records', qs );
+		const data: IDataObject[] = response.data || [];
 
 		_arr.push( ...data );
 

@@ -16,7 +16,7 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<INodePro
 		extractValue: true,
 	} ) as string;
 
-	const response = await apiRequest.call( this, 'GET', 'fields', { baseID, tableID } );
+	const response: any = await apiRequest.call( this, 'GET', 'fields', { baseID, tableID } );
 	const fields: Field[] = response.data || [];
 
 	if ( !fields.length ) {
