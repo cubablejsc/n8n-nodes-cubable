@@ -42,9 +42,9 @@ export async function execute(
 
 			qs.returnFieldsByFieldID = returnFieldsByFieldID;
 
-			const recordID: boolean = this.getNodeParameter( 'recordID', i, undefined, {
-				extractValue: true
-			} ) as boolean;
+			const recordID: string = this.getNodeParameter( 'recordID', i, undefined, {
+				extractValue: true,
+			} ) as string;
 
 			const response: any = await apiRequest.call( this, 'GET', `records/${recordID}`, qs );
 

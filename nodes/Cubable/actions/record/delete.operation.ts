@@ -8,6 +8,7 @@ import {
 } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';
+import { Batch } from '../../helpers/types';
 import { wrapData } from '../../helpers/utils';
 
 import { setRecordID } from '../common.description';
@@ -35,13 +36,13 @@ export async function execute(
 ): Promise<INodeExecutionData[]> {
 	const returnData: INodeExecutionData[] = [];
 	const qs: IDataObject = { baseID, tableID };
-	const batch: any = { indexes: [], data: [] };
+	const batch: Batch = { indexes: [], data: [] };
 	const itemsLength: number = items.length;
 
 	for ( let i: number = 0; i < itemsLength; i++ ) {
-		const recordID: boolean = this.getNodeParameter( 'recordID', i, undefined, {
-			extractValue: true
-		} ) as boolean;
+		const recordID: string = this.getNodeParameter( 'recordID', i, undefined, {
+			extractValue: true,
+		} ) as string;
 
 		batch.indexes.push( i );
 		batch.data.push( recordID );
