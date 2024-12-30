@@ -71,10 +71,10 @@ export async function execute(
 	const qs: IDataObject = { baseID, tableID };
 	const batch: any = { indexes: [], data: [] };
 	const itemsLength: number = items.length;
-	
-	for ( let i: number = 0; i < itemsLength; i++ ) {
-		const dataMode: string = this.getNodeParameter( 'fields.mappingMode', i ) as string;
 
+	const dataMode: string = this.getNodeParameter( 'fields.mappingMode', 0 ) as string;
+
+	for ( let i: number = 0; i < itemsLength; i++ ) {
 		let fields!: IDataObject;
 
 		if ( dataMode === 'defineBelow' ) {
