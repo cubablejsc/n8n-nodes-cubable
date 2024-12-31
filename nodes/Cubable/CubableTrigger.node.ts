@@ -6,6 +6,7 @@ import {
 	type IWebhookFunctions,
 	type IWebhookResponseData,
 	NodeConnectionType,
+	NodeOperationError,
 } from 'n8n-workflow';
 
 import {
@@ -87,90 +88,102 @@ export class CubableTrigger implements INodeType {
 	webhookMethods = {
 		'default': {
 			checkExists: async function ( this: IHookFunctions ): Promise<boolean> {
-				const baseID: string = this.getNodeParameter( 'base', undefined, {
-					extractValue: true,
-				} ) as string;
-
-				const response: any = await apiRequest.call( this, 'GET', 'webhooks', { baseID } );
-				const data: { notificationUrl: string }[] = response.data || [];
-
-				const webhookUrl: string = this.getNodeWebhookUrl( 'default' ) as string;
-
-				const exists: boolean = data.some(({ notificationUrl }) => notificationUrl === webhookUrl );
-
-				// @ts-ignore
-				console.log( 'check webhook exists' );
-
-				return exists;
-			},
-			create: async function ( this: IHookFunctions) : Promise<boolean> {
-				const baseID: string = this.getNodeParameter( 'base', undefined, {
-					extractValue: true,
-				} ) as string;
-				const tableID: string = this.getNodeParameter( 'table', undefined, {
-					extractValue: true,
-				} ) as string;
-				const webhookUrl: string = this.getNodeWebhookUrl( 'default' ) as string;
-				const body: IDataObject = {
-					notificationUrl: webhookUrl,
-					params: {
-						filters: {
-							// "sourceTypes": [],
-							eventTypes: [
-								'records:create',
-								'records:update',
-								'records:delete',
-							],
-							eventOnTableIDs: [
-								tableID,
-							],
-							// eventOnRecordInFieldIDs: [
-							// 	"field1",
-							// 	"field2"
-							// ],
-						},
-					},
-				};
-
-				const response: any = await apiRequest.call( this, 'POST', 'webhooks', { baseID }, body );
-				const data: { id: string; macSecretBase64: string } = response.data;
-
-				if ( data ) {
-					const nodeStaticData: IDataObject = this.getWorkflowStaticData( 'node' );
-
-					nodeStaticData.webhookID = data.id;
-					nodeStaticData.webhookMacSecretBase64 = data.macSecretBase64;
-				}
-
-				// @ts-ignore
-				console.log( 'create webhook' );
-
-				return true;
-			},
-			delete: async function (this: IHookFunctions): Promise<boolean> {
-				const nodeStaticData: IDataObject = this.getWorkflowStaticData( 'node' );
-				const webhookID: string = nodeStaticData.webhookID as string;
-
-				if ( webhookID ) {
+				try {
 					const baseID: string = this.getNodeParameter( 'base', undefined, {
 						extractValue: true,
 					} ) as string;
 
-					await apiRequest.call( this, 'DELETE', `webhooks/${webhookID}`, { baseID } );
+					const response: any = await apiRequest.call( this, 'GET', 'webhooks', { baseID } );
+					const data: { notificationUrl: string }[] = response.data || [];
 
-					delete nodeStaticData.webhookID;
-					delete nodeStaticData.webhookMacSecretBase64;
+					const webhookUrl: string = this.getNodeWebhookUrl( 'default' ) as string;
+
+					const exists: boolean = data.some(({ notificationUrl }) => notificationUrl === webhookUrl );
+
+					// @ts-ignore
+					console.log( 'check webhook exists' );
+
+					return exists;
+				} catch ( error ) {
+					throw new NodeOperationError( this.getNode(), error as Error );
 				}
+			},
+			create: async function ( this: IHookFunctions) : Promise<boolean> {
+				try {
+					const baseID: string = this.getNodeParameter( 'base', undefined, {
+						extractValue: true,
+					} ) as string;
+					const tableID: string = this.getNodeParameter( 'table', undefined, {
+						extractValue: true,
+					} ) as string;
+					const webhookUrl: string = this.getNodeWebhookUrl( 'default' ) as string;
+					const body: IDataObject = {
+						notificationUrl: webhookUrl,
+						params: {
+							filters: {
+								// "sourceTypes": [],
+								eventTypes: [
+									'records:create',
+									'records:update',
+									'records:delete',
+								],
+								eventOnTableIDs: [
+									tableID,
+								],
+								// eventOnRecordInFieldIDs: [
+								// 	"field1",
+								// 	"field2"
+								// ],
+							},
+						},
+					};
 
-				// @ts-ignore
-				console.log( 'delete webook' );
+					const response: any = await apiRequest.call( this, 'POST', 'webhooks', { baseID }, body );
+					const data: { id: string; macSecretBase64: string } = response.data;
 
-				return true;
+					if ( data ) {
+						const nodeStaticData: IDataObject = this.getWorkflowStaticData( 'node' );
+
+						nodeStaticData.webhookID = data.id;
+						nodeStaticData.webhookMacSecretBase64 = data.macSecretBase64;
+					}
+
+					// @ts-ignore
+					console.log( 'create webhook' );
+
+					return true;
+				} catch ( error ) {
+					throw new NodeOperationError( this.getNode(), error as Error );
+				}
+			},
+			delete: async function ( this: IHookFunctions ): Promise<boolean> {
+				try {
+					const nodeStaticData: IDataObject = this.getWorkflowStaticData( 'node' );
+					const webhookID: string = nodeStaticData.webhookID as string;
+
+					if ( webhookID ) {
+						const baseID: string = this.getNodeParameter( 'base', undefined, {
+							extractValue: true,
+						} ) as string;
+
+						await apiRequest.call( this, 'DELETE', `webhooks/${webhookID}`, { baseID } );
+
+						delete nodeStaticData.webhookID;
+						delete nodeStaticData.webhookMacSecretBase64;
+					}
+
+					// @ts-ignore
+					console.log( 'delete webook' );
+
+					return true;
+				} catch ( error ) {
+					throw new NodeOperationError( this.getNode(), error as Error );
+				}
 			},
 		},
 	};
 
-	async webhook( this: IWebhookFunctions ): Promise<IWebhookResponseData> {		
+	async webhook( this: IWebhookFunctions ): Promise<IWebhookResponseData> {
 		const data: IDataObject = {};
 
 		const req: any = this.getRequestObject();
@@ -188,13 +201,15 @@ export class CubableTrigger implements INodeType {
 
 		data.executionMode = executionMode;
 
-		const baseID: string = req.body.baseID;
-		const webhookID: string = req.body.webhookID;
-		const cursor: string = req.body.cursor;
-		const qs: IDataObject = { baseID, cursor };
-		const response: any = await apiRequest.call( this, 'GET', `webhooks/payloads/${webhookID}`, qs );
+		try {
+			const baseID: string = req.body.baseID;
+			const webhookID: string = req.body.webhookID;
+			const cursor: string = req.body.cursor;
+			const qs: IDataObject = { baseID, cursor };
+			const response: any = await apiRequest.call( this, 'GET', `webhooks/payloads/${webhookID}`, qs );
 
-		data.payload = response;
+			data.payload = response;
+		} catch {}
 	
 		return {
 			webhookResponse: { message: 'Workflow was started' },
