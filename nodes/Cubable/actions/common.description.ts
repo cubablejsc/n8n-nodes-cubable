@@ -127,24 +127,47 @@ export const setRecordID: INodeProperties = {
 	required: true,
 };
 
-export const getRecordFormatResults: INodeProperties[] = [
+export const fetchRecordOptions: INodeProperties[] = [
 	{
-		displayName: 'Expand Custom Fields',
-		name: 'expandCustomFields',
-		type: 'boolean',
-		description: 'Whether enable this option to convert nested custom fields into a flat structure in the output',
-		default: false,
-	},
-	{
-		displayName: 'Return by Field ID',
-		name: 'returnFieldsByFieldID',
-		type: 'boolean',
-		description: 'Whether enable this option to return custom fields by their field IDs in the output',
-		default: false,
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		default: {},
+		description: 'Additional options which decide which records should be returned',
+		placeholder: 'Add option',
+		options: [
+			{
+				// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-multi-options
+				displayName: 'Output Custom Fields',
+				name: 'outputCustomFields',
+				type: 'multiOptions',
+				typeOptions: {
+					loadOptionsMethod: 'getFields',
+					loadOptionsDependsOn: [ 'base.value', 'table.value' ],
+				},
+				default: [],
+				// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-dynamic-multi-options
+				description: 'The custom fields you want to include in the output',
+			},
+			{
+				displayName: 'Expand Custom Fields',
+				name: 'expandCustomFields',
+				type: 'boolean',
+				description: 'Whether enable this option to convert nested custom fields into a flat structure in the output',
+				default: true,
+			},
+			{
+				displayName: 'Return by Custom Field ID',
+				name: 'returnCustomFieldsByFieldID',
+				type: 'boolean',
+				description: 'Whether enable this option to return custom fields by their field IDs in the output',
+				default: true,
+			},
+		],
 	},
 ];
 
-export const createOrUpdateOptions: INodeProperties[] = [
+export const createOrUpdateRecordOptions: INodeProperties[] = [
 	{
 		displayName: 'Ignore Fields From Input',
 		name: 'ignoreFields',

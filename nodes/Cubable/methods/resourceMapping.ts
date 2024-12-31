@@ -115,7 +115,9 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<Resource
 	return { fields: mapperFields };
 }
 
-export async function getFieldsWithRecordID( this: ILoadOptionsFunctions ): Promise<ResourceMapperFields> {
+export async function getFieldsWithRecordID(
+	this: ILoadOptionsFunctions
+): Promise<ResourceMapperFields> {
 	const returnData: ResourceMapperFields = await getFields.call( this );
 
 	return {

@@ -10,11 +10,11 @@ import {
 import { apiRequest } from '../../transport';
 import { flattenRecordCustomFields, wrapData } from '../../helpers/utils';
 
-import { getRecordFormatResults, setRecordID } from '../common.description';
+import { fetchRecordOptions, setRecordID } from '../common.description';
 
 export const properties: INodeProperties[] = [
 	setRecordID,
-	...getRecordFormatResults,
+	...fetchRecordOptions,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(
@@ -37,25 +37,27 @@ export async function execute(
 
 	for ( let i: number = 0; i < items.length; i++ ) {
 		try {
-			const returnFieldsByFieldID: boolean =
-				this.getNodeParameter( 'returnFieldsByFieldID', i ) as boolean;
-
-			qs.returnFieldsByFieldID = returnFieldsByFieldID;
-
 			const recordID: string = this.getNodeParameter( 'recordID', i, undefined, {
 				extractValue: true,
 			} ) as string;
+
+			const options: any = this.getNodeParameter( 'options', i, {} );
+
+			if ( options.outputCustomFields ) {
+				qs.customFields = options.outputCustomFields.join( ',' );
+			}
+
+			if ( options.returnCustomFieldsByFieldID ) {
+				qs.returnFieldsByFieldID = options.returnCustomFieldsByFieldID;
+			}
 
 			const response: any = await apiRequest.call( this, 'GET', `records/${recordID}`, qs );
 
 			let record: IDataObject = response.data;
 
-			const expandCustomFields: boolean =
-				this.getNodeParameter( 'expandCustomFields', i ) as boolean;
-
-			record = expandCustomFields
-				? flattenRecordCustomFields( record )
-				: record;
+			if ( options.expandCustomFields ) {
+				record = flattenRecordCustomFields( record );
+			}
 
 			const executionData: NodeExecutionWithMetadata[] =
 				this.helpers.constructExecutionMetaData(

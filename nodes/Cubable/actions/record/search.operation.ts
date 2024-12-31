@@ -10,10 +10,7 @@ import {
 import { apiRequest } from '../../transport';
 import { flattenRecordCustomFields, wait } from '../../helpers/utils';
 
-import {
-	getRecordFormatResults,
-	viewRLC
-} from '../common.description';
+import { fetchRecordOptions, viewRLC } from '../common.description';
 
 export const properties: INodeProperties[] = [
 	viewRLC,
@@ -39,7 +36,7 @@ export const properties: INodeProperties[] = [
 		},
 		default: 50,
 	},
-	...getRecordFormatResults,
+	...fetchRecordOptions,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(
@@ -99,11 +96,6 @@ export async function execute(
 		
 			if ( viewID ) qs.viewID = viewID;
 
-			const returnFieldsByFieldID: boolean =
-				this.getNodeParameter( 'returnFieldsByFieldID', i ) as boolean;
-
-			qs.returnFieldsByFieldID = returnFieldsByFieldID;
-
 			const returnAll: boolean = this.getNodeParameter( 'returnAll', i ) as boolean;
 			let limit!: number;
 
@@ -111,13 +103,20 @@ export async function execute(
 				limit = this.getNodeParameter( 'limit', i ) as number;
 			}
 
+			const options: any = this.getNodeParameter( 'options', i, {} );
+
+			if ( options.outputCustomFields ) {
+				qs.customFields = options.outputCustomFields.join( ',' );
+			}
+
+			if ( options.returnCustomFieldsByFieldID ) {
+				qs.returnFieldsByFieldID = options.returnCustomFieldsByFieldID;
+			}
+
 			let records: IDataObject[] = await query.call( this, qs, limit );
 
-			const expandCustomFields: boolean =
-				this.getNodeParameter( 'expandCustomFields', i ) as boolean;
-
 			records = records.map(( record: IDataObject ) => ({
-				json: expandCustomFields
+				json: options.expandCustomFields
 					? flattenRecordCustomFields( record )
 					: record,
 			}));

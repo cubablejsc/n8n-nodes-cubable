@@ -15,7 +15,7 @@ import {
 	wrapData,
 } from '../../helpers/utils';
 
-import { createOrUpdateOptions } from '../common.description';
+import { createOrUpdateRecordOptions } from '../common.description';
 
 export const properties: INodeProperties[] = [
 	{
@@ -53,7 +53,7 @@ export const properties: INodeProperties[] = [
 			},
 		},
 	},
-	...createOrUpdateOptions,
+	...createOrUpdateRecordOptions,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(
