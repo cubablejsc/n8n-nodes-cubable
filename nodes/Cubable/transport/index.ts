@@ -1,10 +1,12 @@
 import type {
 	IDataObject,
 	IExecuteFunctions,
+	IHookFunctions,
 	IHttpRequestMethods,
 	IHttpRequestOptions,
 	ILoadOptionsFunctions,
 	IPollFunctions,
+	IWebhookFunctions,
 } from 'n8n-workflow';
 
 import {
@@ -13,7 +15,7 @@ import {
 } from '../../../credentials/CubableTokenApi.credentials';
 
 export async function apiRequest(
-	this: IExecuteFunctions | ILoadOptionsFunctions | IPollFunctions,
+	this: IExecuteFunctions | ILoadOptionsFunctions | IPollFunctions | IHookFunctions | IWebhookFunctions,
 	method: IHttpRequestMethods,
 	endpoint: string,
 	query?: IDataObject,

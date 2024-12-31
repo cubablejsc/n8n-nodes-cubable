@@ -39,7 +39,8 @@
       "dist/credentials/CubableTokenApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/Cubable/Cubable.node.js"
+      "dist/nodes/Cubable/Cubable.node.js",
+      "dist/nodes/Cubable/CubableTrigger.node.js"
     ]
   },
   "devDependencies": {
