@@ -209,7 +209,6 @@ export class CubableTrigger implements INodeType {
 								eventTypes,
 								eventOnTableIDs: [ tableID ],
 							},
-							includes: {},
 						},
 					};
 
@@ -220,11 +219,17 @@ export class CubableTrigger implements INodeType {
 					}
 
 					if ( options.includeCellValuesInFieldIDs ) {
-						body.params.includes.includeCellValuesInFieldIDs = options.includeCellValuesInFieldIDs;
+						body.params.includes = {
+							...body.params.includes,
+							includeCellValuesInFieldIDs: options.includeCellValuesInFieldIDs,
+						};
 					}
 
 					if ( options.includePreviousValues ) {
-						body.params.includes.includePreviousValues = options.includePreviousValues;
+						body.params.includes = {
+							...body.params.includes,
+							includePreviousValues: options.includePreviousValues,
+						};
 					}
 
 					const response: any = await apiRequest.call( this, 'POST', 'webhooks', { baseID }, body );
