@@ -15,7 +15,7 @@ import {
 
 import { apiRequest } from './transport';
 import { baseRLC, tableRLC } from './actions/common.description';
-import { listSearch } from './methods';
+import { listSearch, loadOptions } from './methods';
 
 export class CubableTrigger implements INodeType {
 
@@ -63,26 +63,109 @@ export class CubableTrigger implements INodeType {
 				// eslint-disable-next-line n8n-nodes-base/node-param-default-wrong-for-options
 				default: CBB_CREDENTIAL_NAME,
 			},
-			// {
-			// 	displayName: 'Resource',
-			// 	name: 'resource',
-			// 	type: 'options',
-			// 	options: [
-			// 		// { name: 'Base', value: 'base' },
-			// 		// { name: 'Table', value: 'table' },
-			// 		// { name: 'Field', value: 'field' },
-			// 		{ name: 'Record', value: 'record' },
-			// 	],
-			// 	default: 'record',
-			// 	noDataExpression: true,
-			// 	required: true,
-			// },
+			{
+				displayName: 'Resource',
+				name: 'resource',
+				type: 'options',
+				options: [
+					// { name: 'Base', value: 'base' },
+					// { name: 'Table', value: 'table' },
+					// { name: 'Field', value: 'field' },
+					{ name: 'Record', value: 'record' },
+				],
+				default: 'record',
+				noDataExpression: true,
+				required: true,
+			},
 			baseRLC,
 			tableRLC,
+			{
+				displayName: 'Event Types',
+				name: 'eventTypes',
+				type: 'multiOptions',
+				displayOptions: {
+					show: {
+						resource: [ 'record' ],
+					},
+					hide: {
+						base: [ '' ],
+						table: [ '' ],
+					},
+				},
+				options: [
+					{
+						name: 'Record Created',
+						value: 'records:create',
+					},
+					{
+						name: 'Record Updated',
+						value: 'records:update',
+					},
+					{
+						name: 'Record Deleted',
+						value: 'records:delete',
+					},
+				],
+				default: [
+					'records:create',
+					'records:update',
+					'records:delete',
+				],
+				required: true,
+				description: 'Specify the types of events to listen for, such as record creation, updates, or deletion',
+			},
+			{
+				displayName: 'Additional Options',
+				name: 'options',
+				type: 'collection',
+				default: {},
+				description: 'Configure additional options to determine which records are included in the output',
+				placeholder: 'Add option',
+				displayOptions: {
+					show: {
+						resource: [ 'record' ],
+					},
+					hide: {
+						base: [ '' ],
+						table: [ '' ],
+					},
+				},
+				options: [
+					{
+						displayName: 'Trigger on Specific Fields',
+						name: 'eventOnRecordInFieldIDs',
+						type: 'multiOptions',
+						typeOptions: {
+							loadOptionsMethod: 'getFieldsForTrigger',
+						},
+						default: [],
+						// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-dynamic-multi-options
+						description: 'The custom fields you want to include in the output',
+					},
+					{
+						displayName: 'Include Specific Field Values',
+						name: 'includeCellValuesInFieldIDs',
+						type: 'multiOptions',
+						typeOptions: {
+							loadOptionsMethod: 'getFieldsForTrigger',
+						},
+						default: [],
+						// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-dynamic-multi-options
+						description: 'Whether to specify the custom fields whose values should be included in the output',
+					},
+					{
+						displayName: 'Include Previous Values',
+						name: 'includePreviousValues',
+						type: 'boolean',
+						default: true,
+						description: 'Whether to include the previous values of fields in the output when changes occur',
+					},
+				],
+			},
 		],
 	};
 
-	methods = { listSearch };
+	methods = { listSearch, loadOptions };
 
 	// @ts-ignore
 	webhookMethods = {
@@ -117,26 +200,32 @@ export class CubableTrigger implements INodeType {
 						extractValue: true,
 					} ) as string;
 					const webhookUrl: string = this.getNodeWebhookUrl( 'default' ) as string;
-					const body: IDataObject = {
+					const eventTypes: string[] = this.getNodeParameter( 'eventTypes' ) as string[];
+					const body: any = {
 						notificationUrl: webhookUrl,
 						params: {
 							filters: {
-								// "sourceTypes": [],
-								eventTypes: [
-									'records:create',
-									'records:update',
-									'records:delete',
-								],
-								eventOnTableIDs: [
-									tableID,
-								],
-								// eventOnRecordInFieldIDs: [
-								// 	"field1",
-								// 	"field2"
-								// ],
+								// sourceTypes: [],
+								eventTypes,
+								eventOnTableIDs: [ tableID ],
 							},
+							includes: {},
 						},
 					};
+
+					const options: any = this.getNodeParameter( 'options' );
+
+					if ( options.eventOnRecordInFieldIDs ) {
+						body.params.filters.eventOnRecordInFieldIDs = options.eventOnRecordInFieldIDs;
+					}
+
+					if ( options.includeCellValuesInFieldIDs ) {
+						body.params.includes.includeCellValuesInFieldIDs = options.includeCellValuesInFieldIDs;
+					}
+
+					if ( options.includePreviousValues ) {
+						body.params.includes.includePreviousValues = options.includePreviousValues;
+					}
 
 					const response: any = await apiRequest.call( this, 'POST', 'webhooks', { baseID }, body );
 					const data: { id: string; macSecretBase64: string } = response.data;
