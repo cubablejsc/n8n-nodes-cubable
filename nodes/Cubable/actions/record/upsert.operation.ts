@@ -14,10 +14,43 @@ import {
 	wrapData,
 } from '../../helpers/utils';
 
-import { properties as updateProperties } from './update.operation';
+import { ignoreFieldsOnAutoMapInputData } from './common.description';
 
 export const properties: INodeProperties[] = [
-	...updateProperties,
+	{
+			displayName: 'Fields',
+			name: 'fields',
+			type: 'resourceMapper',
+			displayOptions: {
+				hide: {
+					base: [ '' ],
+					table: [ '' ],
+				},
+			},
+			default: {
+				mappingMode: 'defineBelow',
+				value: null,
+			},
+			noDataExpression: true,
+			required: true,
+			typeOptions: {
+				loadOptionsDependsOn: [
+					'table.value',
+					'base.value',
+				],
+				resourceMapper: {
+					resourceMapperMethod: 'getFieldsWithRecordID',
+					mode: 'upsert',
+					fieldWords: {
+						singular: 'field',
+						plural: 'fields',
+					},
+					addAllFields: true,
+					multiKeyMatch: true,
+				},
+			},
+		},
+		ignoreFieldsOnAutoMapInputData,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(

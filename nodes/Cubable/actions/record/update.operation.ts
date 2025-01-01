@@ -15,7 +15,7 @@ import {
 	wrapData,
 } from '../../helpers/utils';
 
-import { createOrUpdateRecordOptions } from '../common.description';
+import { ignoreFieldsOnAutoMapInputData } from './common.description';
 
 export const properties: INodeProperties[] = [
 	{
@@ -36,14 +36,12 @@ export const properties: INodeProperties[] = [
 		required: true,
 		typeOptions: {
 			loadOptionsDependsOn: [
-				'operator',
 				'table.value',
 				'base.value',
-				'requiredFieldByConfig',
 			],
 			resourceMapper: {
 				resourceMapperMethod: 'getFieldsWithRecordID',
-				mode: 'add',
+				mode: 'update',
 				fieldWords: {
 					singular: 'field',
 					plural: 'fields',
@@ -53,7 +51,7 @@ export const properties: INodeProperties[] = [
 			},
 		},
 	},
-	...createOrUpdateRecordOptions,
+	ignoreFieldsOnAutoMapInputData,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(

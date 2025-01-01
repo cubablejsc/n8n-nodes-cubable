@@ -10,7 +10,9 @@ import {
 import { apiRequest } from '../../transport';
 import { flattenRecordCustomFields, wait } from '../../helpers/utils';
 
-import { fetchRecordOptions, viewRLC } from '../common.description';
+import { viewRLC } from '../common.description';
+
+import { fetchAdvancedOptions } from './common.description';
 
 export const properties: INodeProperties[] = [
 	viewRLC,
@@ -36,7 +38,7 @@ export const properties: INodeProperties[] = [
 		},
 		default: 50,
 	},
-	...fetchRecordOptions,
+	fetchAdvancedOptions,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(

@@ -11,10 +11,10 @@ import { apiRequest } from '../../transport';
 import { Batch } from '../../helpers/types';
 import { batchExecute, wrapData } from '../../helpers/utils';
 
-import { setRecordID } from '../common.description';
+import { recordIDInput } from './common.description';
 
 export const properties: INodeProperties[] = [
-	setRecordID,
+	recordIDInput,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(

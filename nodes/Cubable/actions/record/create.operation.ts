@@ -15,7 +15,7 @@ import {
 	wrapData,
 } from '../../helpers/utils';
 
-import { createOrUpdateRecordOptions } from '../common.description';
+import { ignoreFieldsOnAutoMapInputData } from './common.description';
 
 export const properties: INodeProperties[] = [
 	{
@@ -52,7 +52,19 @@ export const properties: INodeProperties[] = [
 			},
 		},
 	},
-	...createOrUpdateRecordOptions,
+	{
+		displayName: 'Required Input Based on Field Config',
+		name: 'requiredFieldByConfig',
+		type: 'boolean',
+		displayOptions: {
+			show: {
+				'/fields.mappingMode': [ 'defineBelow' ],
+			},
+		},
+		description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
+		default: false,
+	},
+	ignoreFieldsOnAutoMapInputData,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(

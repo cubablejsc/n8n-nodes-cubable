@@ -65,9 +65,7 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<Resource
 		extractValue: true,
 	} ) as string;
 	const requiredFieldByConfig: boolean =
-		this.getNodeParameter( 'requiredFieldByConfig', undefined, {
-			extractValue: true,
-		} ) as boolean;
+		this.getNodeParameter( 'requiredFieldByConfig', false ) as boolean;
 
 	const response: any = await apiRequest.call( this, 'GET', 'fields', { baseID, tableID } );
 	const fields: Field[] = response.data || [];
@@ -103,7 +101,7 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<Resource
 			displayName: `${field.name} (ID: ${field.id})`,
 			required: requiredFieldByConfig && field.isRequired,
 			defaultMatch: false,
-			canBeUsedToMatch: true,
+			canBeUsedToMatch: false,
 			display: true,
 			type,
 			options,

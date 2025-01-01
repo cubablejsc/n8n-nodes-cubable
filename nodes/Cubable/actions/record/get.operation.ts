@@ -10,11 +10,11 @@ import {
 import { apiRequest } from '../../transport';
 import { flattenRecordCustomFields, wrapData } from '../../helpers/utils';
 
-import { fetchRecordOptions, setRecordID } from '../common.description';
+import { fetchAdvancedOptions, recordIDInput } from './common.description';
 
 export const properties: INodeProperties[] = [
-	setRecordID,
-	...fetchRecordOptions,
+	recordIDInput,
+	fetchAdvancedOptions,
 ];
 
 export const description: INodeProperties[] = updateDisplayOptions(
