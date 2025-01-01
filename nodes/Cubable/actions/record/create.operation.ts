@@ -9,11 +9,7 @@ import {
 
 import { apiRequest } from '../../transport';
 import { Batch } from '../../helpers/types';
-import {
-	batchExecute,
-	removeIgnoredFields,
-	wrapData,
-} from '../../helpers/utils';
+import { batchExecute, removeIgnoredFields, wrapData } from '../../helpers/utils';
 
 import { ignoreFieldsOnAutoMapInputData } from './common.description';
 
@@ -22,15 +18,15 @@ export const properties: INodeProperties[] = [
 		displayName: 'Fields',
 		name: 'fields',
 		type: 'resourceMapper',
+		default: {
+			mappingMode: 'defineBelow',
+			value: null,
+		},
 		displayOptions: {
 			hide: {
 				base: [ '' ],
 				table: [ '' ],
 			},
-		},
-		default: {
-			mappingMode: 'defineBelow',
-			value: null,
 		},
 		noDataExpression: true,
 		required: true,
@@ -53,16 +49,16 @@ export const properties: INodeProperties[] = [
 		},
 	},
 	{
-		displayName: 'Required Input Based on Field Config',
+		displayName: 'Require Input by Field Config',
 		name: 'requiredFieldByConfig',
 		type: 'boolean',
+		default: false,
+		description: 'Whether to require input if the field is marked as required in the configuration',
 		displayOptions: {
 			show: {
 				'/fields.mappingMode': [ 'defineBelow' ],
 			},
 		},
-		description: 'Whether enable this option to make the input required if the field is marked as required in the configuration',
-		default: false,
 	},
 	ignoreFieldsOnAutoMapInputData,
 ];

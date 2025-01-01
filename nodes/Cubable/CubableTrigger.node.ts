@@ -9,12 +9,9 @@ import {
 	NodeOperationError,
 } from 'n8n-workflow';
 
-import {
-	CUBABLE_TOKEN_API_CREDENTIAL_NAME as CBB_CREDENTIAL_NAME,
-} from '../../credentials/CubableTokenApi.credentials';
-
 import { apiRequest } from './transport';
-import { baseRLC, tableRLC } from './actions/common.description';
+import { authentication, credential } from './descriptions/authentication.description';
+import { resource, baseRLC, tableRLC } from './descriptions/common.description';
 import { listSearch, loadOptions } from './methods';
 
 export class CubableTrigger implements INodeType {
@@ -30,59 +27,21 @@ export class CubableTrigger implements INodeType {
 		inputs: [],
 		// eslint-disable-next-line n8n-nodes-base/node-class-description-inputs-wrong-regular-node, n8n-nodes-base/node-class-description-outputs-wrong
 		outputs: [ NodeConnectionType.Main ],
-		credentials: [
-			{
-				name: CBB_CREDENTIAL_NAME,
-				required: true,
-				displayOptions: {
-					show: {
-						authentication: [ CBB_CREDENTIAL_NAME ],
-					},
-				},
-			}
-		],
-		webhooks: [
-			{
-				name: 'default',
-				httpMethod: 'POST',
-				path: 'cubable-webhook',
-				responseCode: '200',
-			},
-		],
+		credentials: [{ ...credential }],
 		properties: [
-			{
-				displayName: 'Authentication',
-				name: 'authentication',
-				type: 'options',
-				options: [
-					{
-						name: 'Access Token',
-						value: CBB_CREDENTIAL_NAME,
-					},
-				],
-				// eslint-disable-next-line n8n-nodes-base/node-param-default-wrong-for-options
-				default: CBB_CREDENTIAL_NAME,
-			},
-			{
-				displayName: 'Resource',
-				name: 'resource',
-				type: 'options',
-				options: [
-					// { name: 'Base', value: 'base' },
-					// { name: 'Table', value: 'table' },
-					// { name: 'Field', value: 'field' },
-					{ name: 'Record', value: 'record' },
-				],
-				default: 'record',
-				noDataExpression: true,
-				required: true,
-			},
+			authentication,
+			resource,
 			baseRLC,
 			tableRLC,
 			{
 				displayName: 'Event Types',
 				name: 'eventTypes',
 				type: 'multiOptions',
+				default: [
+					'records:create',
+					'records:update',
+					'records:delete',
+				],
 				displayOptions: {
 					show: {
 						resource: [ 'record' ],
@@ -92,6 +51,8 @@ export class CubableTrigger implements INodeType {
 						table: [ '' ],
 					},
 				},
+				description: 'Specify the types of events to listen for, such as record creation, updates, or deletion',
+				required: true,
 				options: [
 					{
 						name: 'Record Created',
@@ -106,13 +67,6 @@ export class CubableTrigger implements INodeType {
 						value: 'records:delete',
 					},
 				],
-				default: [
-					'records:create',
-					'records:update',
-					'records:delete',
-				],
-				required: true,
-				description: 'Specify the types of events to listen for, such as record creation, updates, or deletion',
 			},
 			{
 				displayName: 'Additional Options',
@@ -120,7 +74,6 @@ export class CubableTrigger implements INodeType {
 				type: 'collection',
 				default: {},
 				description: 'Configure additional options to determine which records are included in the output',
-				placeholder: 'Add option',
 				displayOptions: {
 					show: {
 						resource: [ 'record' ],
@@ -130,6 +83,7 @@ export class CubableTrigger implements INodeType {
 						table: [ '' ],
 					},
 				},
+				placeholder: 'Add option',
 				options: [
 					{
 						displayName: 'Trigger on Specific Fields',
@@ -151,7 +105,7 @@ export class CubableTrigger implements INodeType {
 						},
 						default: [],
 						// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-dynamic-multi-options
-						description: 'Whether to specify the custom fields whose values should be included in the output',
+						description: 'Specify the custom fields whose values should be included in the output',
 					},
 					{
 						displayName: 'Include Previous Values',
@@ -161,6 +115,14 @@ export class CubableTrigger implements INodeType {
 						description: 'Whether to include the previous values of fields in the output when changes occur',
 					},
 				],
+			},
+		],
+		webhooks: [
+			{
+				name: 'default',
+				httpMethod: 'POST',
+				path: 'cubable-webhook',
+				responseCode: '200',
 			},
 		],
 	};

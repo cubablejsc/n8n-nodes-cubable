@@ -3,7 +3,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { baseRLC, tableRLC } from '../common.description';
+import { baseRLC, tableRLC } from '../../descriptions/common.description';
 
 import * as create from './create.operation';
 import * as upsert from './upsert.operation';
@@ -17,6 +17,9 @@ const properties: INodeProperties[] = [
 		displayName: 'Operation',
 		name: 'operation',
 		type: 'options',
+		default: 'create',
+		noDataExpression: true,
+		required: true,
 		options: [
 			{
 				name: 'Create',
@@ -55,9 +58,6 @@ const properties: INodeProperties[] = [
 				action: 'Update a record in a table',
 			},
 		],
-		default: 'create',
-		noDataExpression: true,
-		required: true,
 	},
 	baseRLC,
 	tableRLC,

@@ -1,5 +1,20 @@
 import type { INodeProperties } from 'n8n-workflow';
 
+export const resource: INodeProperties = {
+	displayName: 'Resource',
+	name: 'resource',
+	type: 'options',
+	default: 'record',
+	noDataExpression: true,
+	required: true,
+	options: [
+		// { name: 'Base', value: 'base' },
+		// { name: 'Table', value: 'table' },
+		// { name: 'Field', value: 'field' },
+		{ name: 'Record', value: 'record' },
+	],
+};
+
 export const baseRLC: INodeProperties = {
 	displayName: 'Base',
 	name: 'base',
@@ -38,16 +53,16 @@ export const tableRLC: INodeProperties = {
 	displayName: 'Table',
 	name: 'table',
 	type: 'resourceLocator',
-	required: true,
+	default: { mode: 'list', value: '' },
 	displayOptions: {
 		hide: {
 			base: [ '' ],
 		},
 	},
+	required: true,
 	typeOptions: {
 		loadOptionsDependsOn: [ 'base.value' ],
 	},
-	default: { mode: 'list', value: '' },
 	modes: [
 		{
 			displayName: 'From List',
@@ -80,6 +95,7 @@ export const viewRLC: INodeProperties = {
 	displayName: 'View',
 	name: 'view',
 	type: 'resourceLocator',
+	default: { mode: 'list', value: '' },
 	displayOptions: {
 		hide: {
 			base: [ '' ],
@@ -89,7 +105,6 @@ export const viewRLC: INodeProperties = {
 	typeOptions: {
 		loadOptionsDependsOn: [ 'base.value', 'table.value' ],
 	},
-	default: { mode: 'list', value: '' },
 	modes: [
 		{
 			displayName: 'From List',

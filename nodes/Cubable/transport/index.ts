@@ -10,8 +10,8 @@ import type {
 } from 'n8n-workflow';
 
 import {
-	CUBABLE_TOKEN_API_CREDENTIAL_NAME as CBB_CREDENTIAL_NAME,
-	CubableTokenApiCredentialProps as CBBCredentialProps,
+	CUBABLE_CREDENTIAL_NAME,
+	CubableCredentialProps,
 } from '../../../credentials/CubableTokenApi.credentials';
 
 export async function apiRequest(
@@ -22,8 +22,8 @@ export async function apiRequest(
 	body?: IDataObject,
 	options?: IHttpRequestOptions
 ): Promise<any> {
-	const credentials: CBBCredentialProps =
-		await this.getCredentials( CBB_CREDENTIAL_NAME ) as CBBCredentialProps;
+	const credentials: CubableCredentialProps =
+		await this.getCredentials( CUBABLE_CREDENTIAL_NAME ) as CubableCredentialProps;
 	const authenticationMethod: string =
 		this.getNodeParameter( 'authentication', undefined ) as string;
 

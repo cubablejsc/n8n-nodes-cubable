@@ -5,13 +5,13 @@ import type {
 } from 'n8n-workflow';
 
 export const CUBABLE_API_ENDPOINT: string = 'https://open.cubable.com/api/v1';
-export const CUBABLE_TOKEN_API_CREDENTIAL_NAME: string = 'cubableTokenApi';
+export const CUBABLE_CREDENTIAL_NAME: string = 'cubableTokenApi';
 
-export type CubableTokenApiCredentialProps = { apiKey: string; apiUrl: string; };
+export type CubableCredentialProps = { apiKey: string; apiUrl: string; };
 
 export class CubableTokenApi implements ICredentialType {
 
-	name = CUBABLE_TOKEN_API_CREDENTIAL_NAME;
+	name = CUBABLE_CREDENTIAL_NAME;
 
 	displayName = 'Cubable Access Token API';
 

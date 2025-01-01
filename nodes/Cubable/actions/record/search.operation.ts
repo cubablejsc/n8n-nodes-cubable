@@ -10,7 +10,7 @@ import {
 import { apiRequest } from '../../transport';
 import { flattenRecordCustomFields, wait } from '../../helpers/utils';
 
-import { viewRLC } from '../common.description';
+import { viewRLC } from '../../descriptions/common.description';
 
 import { fetchAdvancedOptions } from './common.description';
 
@@ -20,13 +20,14 @@ export const properties: INodeProperties[] = [
 		displayName: 'Return All',
 		name: 'returnAll',
 		type: 'boolean',
-		description: 'Whether to return all results or only up to a given limit',
 		default: true,
+		description: 'Whether to return all results or only up to a given limit',
 	},
 	{
 		displayName: 'Limit',
 		name: 'limit',
 		type: 'number',
+		default: 50,
 		description: 'Max number of results to return',
 		displayOptions: {
 			show: {
@@ -36,7 +37,6 @@ export const properties: INodeProperties[] = [
 		typeOptions: {
 			minValue: 1,
 		},
-		default: 50,
 	},
 	fetchAdvancedOptions,
 ];
