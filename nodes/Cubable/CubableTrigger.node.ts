@@ -21,7 +21,7 @@ export class CubableTrigger implements INodeType {
 
 	description: INodeTypeDescription = {
 		displayName: 'Cubable Trigger',
-		name: 'cubable-trigger',
+		name: 'cubableTrigger',
 		icon: 'file:cubable.svg',
 		group: [ 'trigger' ],
 		version: 1,
