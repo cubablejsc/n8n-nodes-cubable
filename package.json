@@ -7,8 +7,10 @@
   ],
   "license": "MIT",
   "homepage": "https://github.com/quinguyen1502/n8n-nodes-cubable#readme",
-  "author": "Cubable <product-team@cubable.com>",
-  "authorName": "Cubable",
+  "author": {
+    "name": "Cubable",
+    "email": "product-team@cubable.com"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/quinguyen1502/n8n-nodes-cubable.git"
