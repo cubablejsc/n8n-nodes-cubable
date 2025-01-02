@@ -34,6 +34,46 @@ export class CubableTrigger implements INodeType {
 			baseRLC,
 			tableRLC,
 			{
+				displayName: 'Source Types',
+				name: 'sourceTypes',
+				type: 'multiOptions',
+				default: [
+					'User',
+					'API',
+					'Automation',
+					'Form',
+				],
+				displayOptions: {
+					show: {
+						resource: [ 'record' ],
+					},
+					hide: {
+						base: [ '' ],
+						table: [ '' ],
+					},
+				},
+				description: 'Specify the sources of events to listen for, such as user, api, automation, form',
+				required: true,
+				options: [
+					{
+						name: 'User',
+						value: 'User',
+					},
+					{
+						name: 'API',
+						value: 'API',
+					},
+					{
+						name: 'Automation',
+						value: 'Automation',
+					},
+					{
+						name: 'Form',
+						value: 'Form',
+					},
+				],
+			},
+			{
 				displayName: 'Event Types',
 				name: 'eventTypes',
 				type: 'multiOptions',
@@ -161,12 +201,13 @@ export class CubableTrigger implements INodeType {
 						extractValue: true,
 					} ) as string;
 					const webhookUrl: string = this.getNodeWebhookUrl( 'default' ) as string;
+					const sourceTypes: string[] = this.getNodeParameter( 'sourceTypes' ) as string[];
 					const eventTypes: string[] = this.getNodeParameter( 'eventTypes' ) as string[];
 					const body: any = {
 						notificationUrl: webhookUrl,
 						params: {
 							filters: {
-								// sourceTypes: [],
+								sourceTypes,
 								eventTypes,
 								eventOnTableIDs: [ tableID ],
 							},
