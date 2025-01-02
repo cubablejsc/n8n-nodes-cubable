@@ -1,19 +1,16 @@
 {
-  "name": "n8n-nodes-cubable",
+  "name": "@cubablejsc/n8n-nodes-cubable",
   "version": "0.1.0",
   "description": "Cubable node of n8n",
   "keywords": [
     "n8n-community-node-package"
   ],
   "license": "MIT",
-  "homepage": "",
-  "author": {
-    "name": "Cubable",
-    "email": "product-team@cubable.com"
-  },
+  "homepage": "https://github.com/quinguyen1502/n8n-nodes-cubable#readme",
+  "author": "Cubable <product-team@cubable.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/quinguyen1502/n8n-nodes-cubable.git"
+    "url": "git+https://github.com/quinguyen1502/n8n-nodes-cubable.git"
   },
   "engines": {
     "node": ">=18.10",
@@ -54,5 +51,13 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "eslint-config-riot": "^1.0.0",
+    "eslint-scope": "^7.2.2",
+    "eslint-visitor-keys": "^3.4.3"
+  },
+  "bugs": {
+    "url": "https://github.com/quinguyen1502/n8n-nodes-cubable/issues"
   }
 }
