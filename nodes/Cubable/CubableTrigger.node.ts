@@ -129,7 +129,6 @@ export class CubableTrigger implements INodeType {
 
 	methods = { listSearch, loadOptions };
 
-	// @ts-ignore
 	webhookMethods = {
 		'default': {
 			checkExists: async function ( this: IHookFunctions ): Promise<boolean> {
