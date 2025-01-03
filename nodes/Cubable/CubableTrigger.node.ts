@@ -214,24 +214,21 @@ export class CubableTrigger implements INodeType {
 						},
 					};
 
-					const options: any = this.getNodeParameter( 'options' );
+					const options: any = this.getNodeParameter( 'options', {} );
 
-					if ( options.eventOnRecordInFieldIDs ) {
+					if ( 'eventOnRecordInFieldIDs' in options ) {
 						body.params.filters.eventOnRecordInFieldIDs = options.eventOnRecordInFieldIDs;
 					}
 
-					if ( options.includeCellValuesInFieldIDs ) {
-						body.params.includes = {
-							...body.params.includes,
-							includeCellValuesInFieldIDs: options.includeCellValuesInFieldIDs,
-						};
+					if ( 'includeCellValuesInFieldIDs' in options ) {
+						body.params.includes ||= {};
+						// temp fix: includeCellValuesInFieldIDs -> includeCellValuesInFieldIds (wait for api v2)
+						body.params.includes.includeCellValuesInFieldIds = options.includeCellValuesInFieldIDs;
 					}
 
-					if ( options.includePreviousValues ) {
-						body.params.includes = {
-							...body.params.includes,
-							includePreviousValues: options.includePreviousValues,
-						};
+					if ( 'includePreviousValues' in options ) {
+						body.params.includes ||= {};
+						body.params.includes.includePreviousValues = options.includePreviousValues;
 					}
 
 					const response: any = await apiRequest.call( this, 'POST', 'webhooks', { baseID }, body );

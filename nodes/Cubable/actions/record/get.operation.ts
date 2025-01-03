@@ -43,11 +43,11 @@ export async function execute(
 
 			const options: any = this.getNodeParameter( 'options', i, {} );
 
-			if ( options.outputCustomFields ) {
+			if ( 'outputCustomFields' in options ) {
 				qs.customFields = options.outputCustomFields.join( ',' );
 			}
 
-			if ( options.returnCustomFieldsByFieldID ) {
+			if ( 'returnCustomFieldsByFieldID' in options ) {
 				qs.returnFieldsByFieldID = options.returnCustomFieldsByFieldID;
 			}
 
