@@ -21,7 +21,7 @@ export class CubableTrigger implements INodeType {
 		name: 'cubableTrigger',
 		icon: 'file:cubable.svg',
 		group: [ 'trigger' ],
-		version: 1,
+		version: 1.1,
 		description: 'Starts the workflow when Cubable events occur',
 		defaults: { name: 'Cubable Trigger' },
 		inputs: [],
