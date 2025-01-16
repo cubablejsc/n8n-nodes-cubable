@@ -1,7 +1,7 @@
 import {
 	type FieldType,
 	type ILoadOptionsFunctions,
-	type INodePropertyOptions,
+	// type INodePropertyOptions,
 	type ResourceMapperField,
 	type ResourceMapperFields,
 	NodeOperationError
@@ -45,6 +45,7 @@ const FIELD_TYPE_MAP: Record<number, FieldType> = {
 	[ CBBFieldType.Rating ]: 'number',
 	[ CBBFieldType.Progress ]: 'number',
 	[ CBBFieldType.Reference ]: 'array',
+	[ CBBFieldType.Dropdown ]: 'array',
 };
 const UNSUPPORT_FIELD_TYPE_MAP: Record<number, boolean> = {
 	[ CBBFieldType.Attachment ]: true,
@@ -82,16 +83,16 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<Resource
 
 	for ( const field of fields ) {
 		let type: FieldType = FIELD_TYPE_MAP[ field.dataType ] || 'string';
-		let options: INodePropertyOptions[] = [];
+		// let options: INodePropertyOptions[] = [];
 
-		if ( field.dataType === CBBFieldType.Dropdown ) {
-			if ( field.params.isMultipleSelect ) {
-				type = 'array';
-			} else {
-				type = 'options';
-				options = field.params.options;
-			}
-		}
+		// if ( field.dataType === CBBFieldType.Dropdown ) {
+		// 	if ( field.params.isMultipleSelect ) {
+		// 		type = 'array';
+		// 	} else {
+		// 		type = 'options';
+		// 		options = field.params.options;
+		// 	}
+		// }
 
 		const unsupport: boolean = UNSUPPORT_FIELD_TYPE_MAP[ field.dataType ] || false;
 
@@ -104,7 +105,7 @@ export async function getFields( this: ILoadOptionsFunctions ): Promise<Resource
 			canBeUsedToMatch: false,
 			display: true,
 			type,
-			options,
+			// options,
 			readOnly: unsupport,
 			removed: unsupport,
 		});
