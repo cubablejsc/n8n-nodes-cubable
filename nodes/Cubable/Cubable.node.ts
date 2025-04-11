@@ -19,7 +19,7 @@ export class Cubable implements INodeType {
 		name: 'cubable',
 		icon: 'file:cubable.svg',
 		group: [ 'transform' ],
-		version: 1.2,
+		version: 2,
 		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
 		description: 'Read, update, write and delete data from Cubable',
 		defaults: { name: 'Cubable' },
