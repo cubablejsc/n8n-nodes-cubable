@@ -1,7 +1,7 @@
 {
 	"node": "n8n-nodes-cubable.cubableTrigger",
-	"nodeVersion": "2",
-	"codexVersion": "2",
+	"nodeVersion": "2.0",
+	"codexVersion": "2.0",
 	"categories": ["Data & Storage"],
 	"resources": {
 		"credentialDocumentation": [
