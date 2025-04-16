@@ -14,6 +14,10 @@ import { authentication, credential } from './descriptions/authentication.descri
 import { resource, baseRLC, tableRLC } from './descriptions/common.description';
 import { listSearch, loadOptions } from './methods';
 
+const getResponseCode = () => {
+	return 200;
+};
+
 export class CubableTrigger implements INodeType {
 
 	description: INodeTypeDescription = {
@@ -161,7 +165,8 @@ export class CubableTrigger implements INodeType {
 			{
 				name: 'default',
 				httpMethod: 'POST',
-				path: 'cubable-webhook'
+				path: 'cubable-webhook',
+				responseCode: `={{(${getResponseCode})()}}`
 			},
 		],
 	};
