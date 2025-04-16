@@ -161,8 +161,7 @@ export class CubableTrigger implements INodeType {
 			{
 				name: 'default',
 				httpMethod: 'POST',
-				path: 'cubable-webhook',
-				responseCode: 200 as any,
+				path: 'cubable-webhook'
 			},
 		],
 	};
